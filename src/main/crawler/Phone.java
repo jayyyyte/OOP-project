@@ -1,55 +1,49 @@
 package main.crawler;
 
-import java.util.List;
-
 public class Phone {
     private String name;
-    private double price;
+    private String price;
+    private String originalPrice;
+    private String discount;
+    private String description;
+    private String specifications;
     private String imageUrl;
     private String productUrl;
-    private List<String> specifications;
-    
-    public Phone(String name, double price, String imageUrl, String productUrl, List<String> specifications) {
-        this.name = name;
-        this.price = price;
-        this.imageUrl = imageUrl;
-        this.productUrl = productUrl;
-        this.specifications = specifications;
-    }
-    
-    public String getName() {
-        return name;
-    }
-    
-    public double getPrice() {
-        return price;
-    }
-    
-    public String getImageUrl() {
-        return imageUrl;
-    }
-    
-    public String getProductUrl() {
-        return productUrl;
-    }
-    
-    public List<String> getSpecifications() {
-        return specifications;
-    }
-    
+    private String rating;
+    private String reviewCount;
+
+    // Constructors
+    public Phone() {}
+
+    // Getters and Setters
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getPrice() { return price; }
+    public void setPrice(String price) { this.price = price; }
+    public String getOriginalPrice() { return originalPrice; }
+    public void setOriginalPrice(String originalPrice) { this.originalPrice = originalPrice; }
+    public String getDiscount() { return discount; }
+    public void setDiscount(String discount) { this.discount = discount; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public String getSpecifications() { return specifications; }
+    public void setSpecifications(String specifications) { this.specifications = specifications; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public String getProductUrl() { return productUrl; }
+    public void setProductUrl(String productUrl) { this.productUrl = productUrl; }
+    public String getRating() { return rating; }
+    public void setRating(String rating) { this.rating = rating; }
+    public String getReviewCount() { return reviewCount; }
+    public void setReviewCount(String reviewCount) { this.reviewCount = reviewCount; }
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Phone: ").append(name).append("\n");
-        sb.append("Price: ").append(price).append(" VND\n");
-        sb.append("URL: ").append(productUrl).append("\n");
-        sb.append("Image: ").append(imageUrl).append("\n");
-        sb.append("Specifications:\n");
-        
-        for (String spec : specifications) {
-            sb.append("- ").append(spec).append("\n");
-        }
-        
-        return sb.toString();
+        return "Phone{" +
+                "name='" + name + '\'' +
+                ", price='" + price + '\'' +
+                ", originalPrice='" + originalPrice + '\'' +
+                ", discount='" + discount + '\'' +
+                '}';
     }
 }
