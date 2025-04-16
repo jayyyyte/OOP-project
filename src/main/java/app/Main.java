@@ -21,6 +21,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import app.*;
+import util.Router;
+
 public class Main extends Application {
     private Scene scene;
     private boolean isDarkTheme = false;
@@ -55,6 +58,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
+            Router.init(primaryStage);
+
             // Main container
             VBox root = new VBox(0); // Reduced spacing
 
@@ -554,8 +559,14 @@ public class Main extends Application {
         Button likeButton = new Button("Yêu thích ♡");
         likeButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #666;");
         
+        Button detailBtn = new Button("Chi tiết");
+        detailBtn.setStyle("-fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 5;");
+        detailBtn.setPrefWidth(100);
+
+        detailBtn.setOnAction(e -> Router.navigateTo(new ProductPage().createScene()));
+
         HBox.setHgrow(starsBox, Priority.ALWAYS);
-        bottomRow.getChildren().addAll(starsBox, likeButton);
+        bottomRow.getChildren().addAll(starsBox, likeButton, detailBtn);
         card.getChildren().add(bottomRow);
         
         return card;
