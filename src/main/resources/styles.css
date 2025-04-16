@@ -136,7 +136,7 @@
 
 .product-showcase {
     -fx-background-color: white;
-    -fx-padding: 20;
+    -fx-padding: 0;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 1);
     -fx-background-radius: 8px;
 }
@@ -145,8 +145,8 @@
     -fx-background-color: white;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 2, 0, 0, 1);
     -fx-background-radius: 8px;
-    -fx-min-width: 220px;
-    -fx-max-width: 220px;
+    -fx-min-width: 160px;
+    -fx-max-width: 160;
     -fx-cursor: hand;
 }
 
@@ -155,7 +155,7 @@
 }
 
 .product-title {
-    -fx-font-size: 14px;
+    -fx-font-size: 11px;
     -fx-font-weight: bold;
     -fx-text-fill: #333333;
     -fx-wrap-text: true;
@@ -163,7 +163,7 @@
 }
 
 .product-subtitle {
-    -fx-font-size: 13px;
+    -fx-font-size: 9px;
     -fx-text-fill: #cd1818;
     -fx-wrap-text: true;
     -fx-alignment: center;

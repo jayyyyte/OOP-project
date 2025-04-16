@@ -15,6 +15,12 @@ import javafx.animation.KeyFrame;
 import javafx.util.Duration;
 import javafx.scene.Node;
 
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
+
 public class Main extends Application {
     private Scene scene;
     private boolean isDarkTheme = false;
@@ -78,7 +84,7 @@ public class Main extends Application {
                 System.err.println("Warning: Could not load styles.css");
             }
             
-            primaryStage.setTitle("CellphoneS Clone");
+            primaryStage.setTitle("OOP Project");
             primaryStage.setScene(scene);
             
             // Make window maximized by default
@@ -326,24 +332,30 @@ public class Main extends Application {
         
         // Add some padding to the sidebar
         sidebar.setPadding(new Insets(10));
-        content.setLeft(sidebar);
         
         // Center content - Main banner and products
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setFitToWidth(true);
         scrollPane.getStyleClass().add("main-scroll-pane");
         
-        VBox centerContent = new VBox(10);
+        VBox centerContent = new VBox(30);
         centerContent.getStyleClass().add("content-area");
         centerContent.setPadding(new Insets(10));
+
+        HBox topView = new HBox(20);
+        topView.getStyleClass().add("content-area");
+        topView.setPadding(new Insets(10));
+
+        VBox mainBannerContent = new VBox(0);
+        mainBannerContent.getStyleClass().add("content-area");
         
         // Main promotional banner
         ImageView mainBanner = new ImageView(new Image(getClass().getResourceAsStream("/images/mainBanner.png")));
-        mainBanner.setFitWidth(1000);
+        mainBanner.setFitWidth(800);
         mainBanner.setPreserveRatio(true);
         
         // Side banners container
-        HBox sideBanners = new HBox(15);
+        VBox sideBanners = new VBox(5);
         sideBanners.setAlignment(Pos.CENTER);
         
         // Side promotional banners
@@ -362,11 +374,11 @@ public class Main extends Application {
         sideBanners.getChildren().addAll(sideBanner1, sideBanner2, sideBanner3);
         
         // Product showcase
-        VBox productShowcase = new VBox(10);
+        VBox productShowcase = new VBox(0);
         productShowcase.getStyleClass().add("product-showcase");
         
         // Featured products
-        HBox featuredProducts = new HBox(10);
+        HBox featuredProducts = new HBox(0);
         featuredProducts.setAlignment(Pos.CENTER);
         
         String[][] products = {
@@ -378,14 +390,19 @@ public class Main extends Application {
         };
         
         for (String[] product : products) {
-            VBox productCard = createProductCard(product[0], product[1]);
+            VBox productCard = createBannerProductCard(product[0], product[1]);
             featuredProducts.getChildren().add(productCard);
         }
         
         productShowcase.getChildren().add(featuredProducts);
-        
+
+        GridPane productGrid = createProductGrid();
+        productGrid.setPadding(new Insets(10));
+
         // Add all components to center content
-        centerContent.getChildren().addAll(mainBanner, sideBanners, productShowcase);
+        mainBannerContent.getChildren().addAll(mainBanner, productShowcase);
+        topView.getChildren().addAll(sidebar, mainBannerContent, sideBanners);
+        centerContent.getChildren().addAll(topView, productGrid);
         
         scrollPane.setContent(centerContent);
         content.setCenter(scrollPane);
@@ -393,7 +410,7 @@ public class Main extends Application {
         return content;
     }
     
-    private VBox createProductCard(String title, String subtitle) {
+    private VBox createBannerProductCard(String title, String subtitle) {
         VBox card = new VBox(10);
         card.getStyleClass().add("product-card");
         card.setPadding(new Insets(10));
@@ -410,6 +427,136 @@ public class Main extends Application {
         } catch (Exception e) {
             System.err.println("Error creating product card: " + e.getMessage());
         }
+        
+        return card;
+    }
+
+    private GridPane createProductGrid() {
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(20));
+        grid.setHgap(10);
+        grid.setVgap(10);
+        
+        // Product data
+        String[][] products = {
+            {"iPhone 16 Pro Max 256GB", "30.990.000đ", "34.990.000đ", "11", "images/phone_icon.png"},
+            {"OPPO FIND N5", "44.990.000đ", "", "0", "images/phone_icon.png"},
+            {"Samsung Galaxy S25 Ultra 12GB 256GB", "28.990.000đ", "33.990.000đ", "15", "images/phone_icon.png"},
+            {"OPPO Reno10 Pro+ 5G 12GB 256GB", "10.990.000đ", "19.990.000đ", "45", "images/phone_icon.png"},
+            {"Samsung Galaxy S24 FE 5G 8GB 128GB", "12.990.000đ", "16.990.000đ", "24", "images/phone_icon.png"},
+            {"iPhone 16 Pro Max 256GB", "30.990.000đ", "34.990.000đ", "11", "images/phone_icon.png"},
+            {"OPPO FIND N5", "44.990.000đ", "", "0", "images/phone_icon.png"},
+            {"Samsung Galaxy S25 Ultra 12GB 256GB", "28.990.000đ", "33.990.000đ", "15", "images/phone_icon.png"},
+            {"OPPO Reno10 Pro+ 5G 12GB 256GB", "10.990.000đ", "19.990.000đ", "45", "images/phone_icon.png"},
+            {"Samsung Galaxy S24 FE 5G 8GB 128GB", "12.990.000đ", "16.990.000đ", "24", "images/phone_icon.png"},
+        };
+        
+        // Create product cards
+        for (int i = 0; i < products.length; i++) {
+            VBox productCard = createProductCard(
+                products[i][0],  // name
+                products[i][1],  // current price
+                products[i][2],  // original price
+                products[i][3],  // discount percentage
+                products[i][4]   // image path
+            );
+            grid.add(productCard, i % 5, i / 5);
+        }
+        
+        return grid;
+    }
+
+    private VBox createProductCard(String name, String currentPrice, String originalPrice, String discountPercent, String imagePath) {
+        VBox card = new VBox(10);
+        card.setPadding(new Insets(15));
+        card.setMinWidth(250);
+        card.setMaxWidth(250);
+        card.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 5;");
+        
+        HBox topRow = new HBox();
+        topRow.setAlignment(Pos.CENTER_LEFT);
+
+        Label discountLabel = new Label("Giam " + discountPercent + "%");
+        discountLabel.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;");
+        
+        Label installmentLabel = new Label("Tra gop 0%");
+        installmentLabel.setStyle("-fx-background-color: white; -fx-text-fill: #0066cc; -fx-padding: 5 10; -fx-border-color: #0066cc; -fx-border-radius: 3;");
+        installmentLabel.setTranslateX(30);
+        
+        topRow.getChildren().addAll(discountLabel, installmentLabel);
+        card.getChildren().add(topRow);
+        
+        // Product image
+        try {
+            ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream(imagePath)));
+            imageView.setFitWidth(190);
+            imageView.setFitHeight(190);
+            imageView.setPreserveRatio(true);
+            
+            StackPane imageContainer = new StackPane(imageView);
+            imageContainer.setAlignment(Pos.CENTER);
+            imageContainer.setPrefHeight(200);
+            card.getChildren().add(imageContainer);
+        } catch (Exception e) {
+            // Fallback for missing images
+            Label imageLabel = new Label("Image not available");
+            imageLabel.setAlignment(Pos.CENTER);
+            imageLabel.setPrefHeight(200);
+            imageLabel.setStyle("-fx-background-color: #f5f5f5; -fx-alignment: center;");
+            card.getChildren().add(imageLabel);
+        }
+        
+        // Product name
+        Label nameLabel = new Label(name);
+        nameLabel.setWrapText(true);
+        nameLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: bold;");
+        card.getChildren().add(nameLabel);
+        
+        // Price information
+        HBox priceBox = new HBox(10);
+        priceBox.setAlignment(Pos.CENTER_LEFT);
+        
+        Label currentPriceLabel = new Label(currentPrice);
+        currentPriceLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: red;");
+        priceBox.getChildren().add(currentPriceLabel);
+        
+        if (!originalPrice.isEmpty()) {
+            Label originalPriceLabel = new Label(originalPrice);
+            originalPriceLabel.setStyle("-fx-strikethrough: true; -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: gray;");
+            priceBox.getChildren().add(originalPriceLabel);
+        }
+        
+        card.getChildren().add(priceBox);
+        
+        // Additional benefits
+        Label benefitLabel = new Label("Smember giảm thêm đến 310.000đ");
+        benefitLabel.setFont(Font.font("System", 12));
+        card.getChildren().add(benefitLabel);
+        
+        // // Installment info
+        // Label installmentLabel = new Label("Khong phi chuyen doi khi tra gop 0% qua the tin dung ky han 3-6 thang");
+        // installmentLabel.setFont(Font.font("System", 12));
+        // installmentLabel.setWrapText(true);
+        // card.getChildren().add(installmentLabel);
+        
+        // Rating and like button
+        HBox bottomRow = new HBox();
+        bottomRow.setAlignment(Pos.CENTER_LEFT);
+        
+        // Stars rating
+        HBox starsBox = new HBox(2);
+        for (int i = 0; i < 5; i++) {
+            Label star = new Label("★");
+            star.setTextFill(Color.ORANGE);
+            starsBox.getChildren().add(star);
+        }
+        
+        Button likeButton = new Button("Yêu thích ♡");
+        likeButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #666;");
+        
+        HBox.setHgrow(starsBox, Priority.ALWAYS);
+        bottomRow.getChildren().addAll(starsBox, likeButton);
+        card.getChildren().add(bottomRow);
         
         return card;
     }

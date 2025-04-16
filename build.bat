@@ -36,7 +36,7 @@ if exist "%LIB_DIR%" (
 echo Compiling source files...
 :: First, find all Java files and compile them
 dir /s /b "%SRC_DIR%\*.java" > sources.txt
-javac -d "%BIN_DIR%" -cp "%CLASSPATH%" @sources.txt
+javac -d "%BIN_DIR%" -cp "%CLASSPATH%" -encoding UTF-8 @sources.txt
 if %ERRORLEVEL% neq 0 (
     echo Error: Compilation failed!
     del sources.txt
