@@ -10,7 +10,7 @@ public class RAGSearchEngine implements SearchEngine {
 
     @Override
     public List<Product> search(String query, List<Product> products) {
-        // Retrieval: Lọc cơ bản
+        // Retrieval: Loc co ban
         List<Product> filtered = basicEngine.search(query, products);
         // Augmentation + Generation (giả lập LLM)
         if (!filtered.isEmpty()) {
