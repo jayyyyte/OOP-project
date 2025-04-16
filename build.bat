@@ -1,0 +1,13 @@
+@echo off
+echo Cleaning previous build...
+if exist bin rmdir /s /q bin
+mkdir bin
+
+echo Compiling Java files...
+javac -d bin -cp "src/main/java" src/main/java/Main.java
+
+echo Copying resources...
+xcopy /s /y "src\main\resources\*" "bin\"
+
+echo Running application...
+java -cp "bin" Main 

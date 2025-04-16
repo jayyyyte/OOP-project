@@ -1,0 +1,170 @@
+/* Global styles */
+.root {
+    -fx-background-color: #f4f6f8;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Top banner styles */
+.top-banner {
+    -fx-background-color: #e9efff;
+    -fx-min-height: 40px;
+    -fx-padding: 8 20;
+}
+
+.banner-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #010c69;
+    -fx-font-weight: bold;
+}
+
+.banner-icon {
+    -fx-font-size: 16px;
+    -fx-text-fill: white;
+    -fx-padding: 0 5;
+}
+
+.banner-nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #010c69;
+    -fx-font-size: 20px;
+    -fx-cursor: hand;
+    -fx-padding: 5 10;
+    -fx-min-width: 30px;
+}
+
+.banner-nav-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Navigation bar styles */
+.nav-bar {
+    -fx-background-color: #cd1818;
+    -fx-padding: 10px 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 2);
+}
+
+.logo {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.search-field {
+    -fx-background-color: white;
+    -fx-padding: 8px;
+    -fx-font-size: 14px;
+    -fx-background-radius: 4px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 4px;
+    -fx-prompt-text-fill: #888888;
+    -fx-text-fill: #333333;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 15px;
+    -fx-cursor: hand;
+    -fx-border-color: white;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.nav-button-light {
+    -fx-background-color: #df3346;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 15px;
+    -fx-cursor: hand;
+    -fx-border-color: white;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.nav-button:hover {
+    -fx-background-color: rgba(255,255,255,0.1);
+}
+
+/* Sidebar styles */
+.sidebar {
+    -fx-background-color: white;
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 2, 0);
+    -fx-background-radius: 8px;
+    -fx-max-width: 250px;
+}
+
+.category-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #333333;
+    -fx-font-size: 13px;
+    -fx-padding: 8px 15px;
+    -fx-cursor: hand;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-max-width: infinity;
+}
+
+.category-button:hover {
+    -fx-background-color: #f5f5f5;
+}
+
+/* Promotional banner styles */
+.promo-banner {
+    -fx-background-color: #ff4444;
+    -fx-min-height: 300px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 2);
+}
+
+/* Content area styles */
+.content-area {
+    -fx-background-color: transparent;
+    -fx-alignment: top-center;
+}
+
+.main-scroll-pane {
+    -fx-background: #f4f6f8;
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.main-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.product-showcase {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 1);
+    -fx-background-radius: 8px;
+}
+
+.product-card {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 2, 0, 0, 1);
+    -fx-background-radius: 8px;
+    -fx-min-width: 220px;
+    -fx-max-width: 220px;
+    -fx-cursor: hand;
+}
+
+.product-card:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 8, 0, 0, 2);
+}
+
+.product-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+    -fx-wrap-text: true;
+    -fx-alignment: center;
+}
+
+.product-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #cd1818;
+    -fx-wrap-text: true;
+    -fx-alignment: center;
+} 
