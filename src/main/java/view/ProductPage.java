@@ -1,4 +1,4 @@
-package app;
+package view;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -19,6 +19,7 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.stage.Screen;
 import javafx.geometry.Rectangle2D;
+import util.Router;
 
 public class ProductPage {
     public Scene createScene() {
@@ -63,6 +64,15 @@ public class ProductPage {
         header.setPadding(new Insets(15));
         header.setStyle("-fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;");
         
+        // Go back button
+        Button backButton = new Button("← Quay lại");
+        backButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #1976d2; -fx-font-weight: bold;");
+
+        // Navigate back to HomePage when clicked
+        backButton.setOnAction(e -> {
+            Router.navigateTo(new HomePage().createScene());
+        });
+
         // Product name
         Label productName = new Label("iPhone 16 Pro Max 256GB | Chính hãng VN/A");
         productName.setFont(Font.font("System", FontWeight.BOLD, 20));
@@ -87,7 +97,7 @@ public class ProductPage {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         
-        header.getChildren().addAll(productName, ratings, ratingsCount, spacer, compareButton);
+        header.getChildren().addAll(backButton, productName, ratings, ratingsCount, spacer, compareButton);
         return header;
     }
     
@@ -107,7 +117,7 @@ public class ProductPage {
         ImageView mainImage = new ImageView();
         // Replace with actual image path
         try {
-            mainImage.setImage(new Image(getClass().getResourceAsStream("/images/iphone16-pro-max.png")));
+            mainImage.setImage(new Image(getClass().getResourceAsStream("/images/iphone-16.png")));
         } catch (Exception e) {
             System.out.println("Image not found. Using placeholder.");
             mainImage = createPlaceholderImage(350, 350);
