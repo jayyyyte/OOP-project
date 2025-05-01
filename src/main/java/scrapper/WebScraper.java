@@ -37,8 +37,8 @@ public class WebScraper {
     private static final String DETAIL_URL_SELECTOR = "a";
 
     // Selectors for the product detail page
-    private static final String DETAIL_DESCRIPTION_SELECTOR = "div.block-technical-content";
-    private static final String DETAIL_SPECS_TABLE_SELECTOR = "ul.box-product__charactestic-ul li";
+    private static final String DETAIL_DESCRIPTION_SELECTOR = "div.desktop";
+    private static final String DETAIL_SPECS_TABLE_SELECTOR = "ul.technical-content li";
     
     // Rating and Review selectors - updated with correct selectors for the website
     private static final String DETAIL_RATING_SELECTOR = "div.seller-overview-rating, div.rating-overview strong";
@@ -151,7 +151,9 @@ public class WebScraper {
                         "div.product-detail-description",
                         "div.product__content",
                         "section.product-specs",
-                        "div.product-description-content"
+                        "div.product-description-content",
+                            "div.desktop",
+                            "div.ksp-content.p-2.mb-2"
                     };
                     
                     for (String selector : descriptionSelectors) {
