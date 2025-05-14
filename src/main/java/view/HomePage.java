@@ -18,6 +18,13 @@ import javafx.scene.text.FontWeight;
 
 import view.*;
 import util.Router;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HomePage {
     private Scene scene;
@@ -49,6 +56,18 @@ public class HomePage {
         new BannerItem("✅", "Sale soc - Giam den 50%"),
         new BannerItem("✅", "Bao hanh chinh hang 12 thang")
     };
+
+    // Define a Product class to match the JSON structure
+    private class Product {
+        String name;
+        String productUrl;
+        String imageUrl;
+        double price;
+        String priceCurrency;
+        double overallRating;
+        int reviewCount;
+        // Add other fields as necessary
+    }
 
     public Scene createScene() {
         VBox root = new VBox(0);
@@ -408,34 +427,45 @@ public class HomePage {
         return card;
     }
 
+    private List<Product> loadProducts() {
+        List<Product> products = new ArrayList<>();
+        try (InputStream is = getClass().getResourceAsStream("/products.json");
+             JsonReader reader = Json.createReader(is)) {
+
+            JsonArray jsonArray = reader.readArray();
+            for (JsonObject jsonObject : jsonArray.getValuesAs(JsonObject.class)) {
+                Product product = new Product();
+                product.name = jsonObject.getString("name", "");
+                product.productUrl = jsonObject.getString("productUrl", "");
+                product.imageUrl = jsonObject.getString("imageUrl", "");
+                product.price = jsonObject.getJsonNumber("price").doubleValue();
+                product.priceCurrency = jsonObject.getString("priceCurrency", "");
+                product.overallRating = jsonObject.getJsonNumber("overallRating").doubleValue();
+                product.reviewCount = jsonObject.getInt("reviewCount", 0);
+                products.add(product);
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading products: " + e.getMessage());
+        }
+        return products;
+    }
+
     private GridPane createProductGrid() {
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(20));
         grid.setHgap(10);
         grid.setVgap(10);
         
-        // Product data
-        String[][] products = {
-            {"iPhone 16 Pro Max 256GB", "30.990.000đ", "34.990.000đ", "11", "images/phone_icon.png"},
-            {"OPPO FIND N5", "44.990.000đ", "", "0", "images/phone_icon.png"},
-            {"Samsung Galaxy S25 Ultra 12GB 256GB", "28.990.000đ", "33.990.000đ", "15", "images/phone_icon.png"},
-            {"OPPO Reno10 Pro+ 5G 12GB 256GB", "10.990.000đ", "19.990.000đ", "45", "images/phone_icon.png"},
-            {"Samsung Galaxy S24 FE 5G 8GB 128GB", "12.990.000đ", "16.990.000đ", "24", "images/phone_icon.png"},
-            {"iPhone 16 Pro Max 256GB", "30.990.000đ", "34.990.000đ", "11", "images/phone_icon.png"},
-            {"OPPO FIND N5", "44.990.000đ", "", "0", "images/phone_icon.png"},
-            {"Samsung Galaxy S25 Ultra 12GB 256GB", "28.990.000đ", "33.990.000đ", "15", "images/phone_icon.png"},
-            {"OPPO Reno10 Pro+ 5G 12GB 256GB", "10.990.000đ", "19.990.000đ", "45", "images/phone_icon.png"},
-            {"Samsung Galaxy S24 FE 5G 8GB 128GB", "12.990.000đ", "16.990.000đ", "24", "images/phone_icon.png"},
-        };
+        List<Product> products = loadProducts();
         
-        // Create product cards
-        for (int i = 0; i < products.length; i++) {
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
             VBox productCard = createProductCard(
-                products[i][0],  // name
-                products[i][1],  // current price
-                products[i][2],  // original price
-                products[i][3],  // discount percentage
-                products[i][4]   // image path
+                product.name, // name
+                String.format("%,.0f %s", product.price, product.priceCurrency), // current price
+                "",  // Assuming no original price in JSON
+                "0",  // Assuming no discount percentage in JSON
+                product.imageUrl
             );
             grid.add(productCard, i % 5, i / 5);
         }

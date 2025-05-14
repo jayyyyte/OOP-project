@@ -1,6 +1,6 @@
-package com.product.search;
+package search;
 
-import com.product.model.Product;
+import model.Product;
 
 import java.util.ArrayList;
 import java.util.List;

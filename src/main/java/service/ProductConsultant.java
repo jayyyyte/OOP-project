@@ -1,7 +1,7 @@
-package com.product.main;
+package service;
 
-import com.product.model.Product;
-import com.product.search.SearchEngine;
+import model.Product;
+import search.SearchEngine;
 
 import java.util.ArrayList;
 import java.util.List;

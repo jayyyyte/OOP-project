@@ -1,4 +1,4 @@
-package com.product.model;
+package model;
 
 public class Review {
     private String userId;
