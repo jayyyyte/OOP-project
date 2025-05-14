@@ -37,13 +37,24 @@ public class WebScraper {
     private static final String DETAIL_URL_SELECTOR = "a";
 
     // Selectors for the product detail page
-    private static final String DETAIL_DESCRIPTION_SELECTOR = "div.block-technical-content";
-    private static final String DETAIL_SPECS_TABLE_SELECTOR = "ul.box-product__charactestic-ul li";
-    
+    private static final String DETAIL_DESCRIPTION_SELECTOR = "div.desktop";
+    private static final String DETAIL_SPECS_SELECTORS = "ul.technical-content li";
+
+    // Updated selectors for specifications
+    private static final String SPECS_BUTTON_SELECTOR = "div.specifications-button a, button.show-specifications, a.show-configuration";
+    private static final String SPECS_TABLE_SELECTOR = "table.box-content__table, div.specifications-content table, div.technical-content table";
+    private static final String SPECS_ROW_SELECTOR = "tr";
+    private static final String SPECS_LABEL_SELECTOR = "td:first-child, th:first-child";
+    private static final String SPECS_VALUE_SELECTOR = "td:last-child, th:last-child";
+
+    // Alternative selectors for specifications in case the table format is different
+    private static final String ALT_SPECS_CONTAINER_SELECTOR = "div.technical-content, div.box01-item";
+    private static final String ALT_SPECS_ROW_SELECTOR = "p, div.fs-dt-item";
+
     // Rating and Review selectors - updated with correct selectors for the website
     private static final String DETAIL_RATING_SELECTOR = "div.seller-overview-rating, div.rating-overview strong";
     private static final String DETAIL_REVIEW_COUNT_SELECTOR = "div.seller-overview-rating + a, div.rating-overview + a";
-    
+
     // Additional selectors for review content
     private static final String REVIEWS_CONTAINER_SELECTOR = "div.comment-list, div.list-comment";
     private static final String REVIEW_ITEM_SELECTOR = "div.comment-item, div.item-comment";
@@ -142,6 +153,9 @@ public class WebScraper {
                     System.out.println("Navigating to detail page: " + product.getProductUrl());
                     driver.get(product.getProductUrl());
 
+                    // Add a delay to ensure page loads completely
+                    Thread.sleep(1000);
+
                     // Extract Description - Try multiple selectors
                     boolean descriptionFound = false;
                     String[] descriptionSelectors = {
@@ -151,11 +165,28 @@ public class WebScraper {
                         "div.product-detail-description",
                         "div.product__content",
                         "section.product-specs",
-                        "div.product-description-content"
+                        "div.product-description-content",
+                            "div.desktop",
+                            "div.ksp-content.p-2.mb-2",
+                            "div.product__desc",
+                            "meta[name='description']"
                     };
-                    
+
                     for (String selector : descriptionSelectors) {
                         try {
+                            if (selector.equals("meta[name='description']")) {
+                                // Special case for meta description
+                                WebElement metaDesc = driver.findElement(By.cssSelector(selector));
+                                String content = metaDesc.getAttribute("content");
+                                if (content != null && !content.isEmpty()) {
+                                    product.setDescription(content);
+                                    System.out.println("Found description using meta tag");
+                                    descriptionFound = true;
+                                    break;
+                                }
+                                continue;
+                            }
+
                             List<WebElement> descElements = driver.findElements(By.cssSelector(selector));
                             if (!descElements.isEmpty()) {
                                 StringBuilder sb = new StringBuilder();
@@ -165,7 +196,7 @@ public class WebScraper {
                                         sb.append(text).append("\n\n");
                                     }
                                 }
-                                
+
                                 if (sb.length() > 0) {
                                     product.setDescription(sb.toString().trim());
                                     System.out.println("Found description using selector: " + selector);
@@ -177,13 +208,13 @@ public class WebScraper {
                             // Try next selector
                         }
                     }
-                    
+
                     // If still not found, try a more generic approach
                     if (!descriptionFound) {
                         try {
                             // Try to find any div with substantial text content in the main product area
                             List<WebElement> contentDivs = driver.findElements(By.cssSelector("div.product-detail div, div.product-container div"));
-                            
+
                             for (WebElement div : contentDivs) {
                                 String text = div.getText().trim();
                                 // Look for divs with substantial text (more than 100 chars)
@@ -198,7 +229,7 @@ public class WebScraper {
                             System.err.println("Error in generic description approach: " + e.getMessage());
                         }
                     }
-                    
+
                     if (!descriptionFound) {
                         System.err.println("Description not found for: " + product.getName());
                         product.setDescription("No description available");
@@ -206,38 +237,275 @@ public class WebScraper {
 
                     // Extract Specifications
                     Map<String, String> specs = new HashMap<>();
+                    boolean specsFound = false;
+
+                    // APPROACH 1: Try to click "Xem cấu hình chi tiết" button and extract from expanded section
                     try {
-                        List<WebElement> specRows = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(DETAIL_SPECS_TABLE_SELECTOR)));
-                        for (WebElement row : specRows) {
+                        System.out.println("Looking for specifications button...");
+                        // Attempt to find and click on the specifications button with all possible selectors
+                        List<WebElement> specsButtons = driver.findElements(By.cssSelector(SPECS_BUTTON_SELECTOR));
+
+                        boolean buttonClicked = false;
+                        for (WebElement button : specsButtons) {
                             try {
-                                String rowText = row.getText().trim();
-                                if (rowText.contains(":")) {
-                                    String[] parts = rowText.split(":", 2);
-                                    if (parts.length == 2) {
-                                        String key = parts[0].trim();
-                                        String value = parts[1].trim();
-                                        if (!key.isEmpty()) {
-                                            specs.put(key, value);
+                                if (button.isDisplayed() &&
+                                        (button.getText().toLowerCase().contains("cấu hình") ||
+                                                button.getText().toLowerCase().contains("thông số") ||
+                                                button.getAttribute("textContent").toLowerCase().contains("cấu hình"))) {
+
+                                    System.out.println("Found specs button: " + button.getText());
+                                    // Scroll to the button
+                                    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", button);
+                                    Thread.sleep(300);
+
+                                    // Try clicking normally first
+                                    try {
+                                        button.click();
+                                        buttonClicked = true;
+                                        System.out.println("Clicked specifications button");
+                                    } catch (Exception e) {
+                                        // If normal click fails, try JavaScript click
+                                        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", button);
+                                        buttonClicked = true;
+                                        System.out.println("Clicked specifications button via JavaScript");
+                                    }
+
+                                    // Wait for specs to load
+                                    Thread.sleep(500);
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                System.err.println("Error clicking a specs button: " + e.getMessage());
+                            }
+                        }
+
+                        // If button not found or clicked, try JavaScript approach
+                        if (!buttonClicked) {
+                            System.out.println("Button not found/clicked normally, trying JavaScript approach");
+                            // Find a more generic button that might open specs
+                            List<WebElement> possibleButtons = driver.findElements(
+                                    By.xpath("//button[contains(text(), 'cấu hình') or contains(text(), 'thông số')] | " +
+                                            "//a[contains(text(), 'cấu hình') or contains(text(), 'thông số')]"));
+
+                            for (WebElement btn : possibleButtons) {
+                                try {
+                                    ((JavascriptExecutor) driver).executeScript("arguments[0].click();", btn);
+                                    buttonClicked = true;
+                                    System.out.println("Clicked button via JavaScript: " + btn.getText());
+                                    Thread.sleep(500);
+                                    break;
+                                } catch (Exception e) {
+                                    // Continue to next button
+                                }
+                            }
+                        }
+
+                        // If still no button found, look for elements with click handlers
+                        if (!buttonClicked) {
+                            System.out.println("No buttons found, looking for clickable elements with specs text");
+                            List<WebElement> possibleElements = driver.findElements(
+                                    By.xpath("//*[contains(text(), 'cấu hình chi tiết') or contains(text(), 'thông số kỹ thuật')]"));
+
+                            for (WebElement element : possibleElements) {
+                                try {
+                                    ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+                                    System.out.println("Clicked element: " + element.getText());
+                                    Thread.sleep(500);
+                                    break;
+                                } catch (Exception e) {
+                                    // Continue to next element
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Error finding/clicking specs button: " + e.getMessage());
+                    }
+
+                    // APPROACH 2: Extract specifications from tables
+                    System.out.println("Looking for specification tables...");
+                    try {
+                        List<WebElement> specTables = driver.findElements(By.cssSelector(SPECS_TABLE_SELECTOR));
+
+                        for (WebElement table : specTables) {
+                            try {
+                                System.out.println("Found a specification table");
+                                List<WebElement> rows = table.findElements(By.cssSelector(SPECS_ROW_SELECTOR));
+
+                                for (WebElement row : rows) {
+                                    try {
+                                        WebElement labelElement = row.findElement(By.cssSelector(SPECS_LABEL_SELECTOR));
+                                        WebElement valueElement = row.findElement(By.cssSelector(SPECS_VALUE_SELECTOR));
+
+                                        String label = labelElement.getText().trim();
+                                        String value = valueElement.getText().trim();
+
+                                        if (!label.isEmpty() && !value.isEmpty()) {
+                                            specs.put(label, value);
+                                            specsFound = true;
+                                        }
+                                    } catch (Exception rowEx) {
+                                        // Skip this row and continue to next
+                                    }
+                                }
+                            } catch (Exception tableEx) {
+                                System.err.println("Error processing a spec table: " + tableEx.getMessage());
+                            }
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Error finding specification tables: " + e.getMessage());
+                    }
+
+                    // APPROACH 3: Look for alternate specs format (non-table formats)
+                    if (!specsFound) {
+                        System.out.println("Table approach failed, trying alternative specs format...");
+                        try {
+                            List<WebElement> specContainers = driver.findElements(By.cssSelector(ALT_SPECS_CONTAINER_SELECTOR));
+
+                            for (WebElement container : specContainers) {
+                                List<WebElement> specRows = container.findElements(By.cssSelector(ALT_SPECS_ROW_SELECTOR));
+
+                                for (WebElement row : specRows) {
+                                    String rowText = row.getText().trim();
+
+                                    // Try to parse spec rows in format "Label: Value"
+                                    if (rowText.contains(":")) {
+                                        String[] parts = rowText.split(":", 2);
+                                        if (parts.length == 2) {
+                                            String key = parts[0].trim();
+                                            String value = parts[1].trim();
+                                            if (!key.isEmpty() && !value.isEmpty()) {
+                                                specs.put(key, value);
+                                                specsFound = true;
+                                            }
                                         }
                                     }
                                 }
-                            } catch (Exception specRowEx) {
-                                System.err.println("Error parsing spec row for " + product.getName());
                             }
+                        } catch (Exception e) {
+                            System.err.println("Error in alternative specs approach: " + e.getMessage());
                         }
-                        product.setSpecifications(specs);
-                        
-                        // Organize specifications into categories
-                        product.organizeSpecificationsIntoCategories();
-                        
-                    } catch (TimeoutException | NoSuchElementException specEx) {
-                        System.err.println("Specifications not found for: " + product.getName());
-                        product.setSpecifications(new HashMap<>());
                     }
+
+                    // APPROACH 4: Try to find specs directly in the HTML
+                    if (!specsFound) {
+                        System.out.println("Previous approaches failed, trying direct HTML inspection...");
+                        try {
+                            // Get the page source
+                            String pageSource = driver.getPageSource();
+
+                            // Search for specification section HTML patterns
+                            Pattern specPattern = Pattern.compile("<td[^>]*>(.*?)</td>\\s*<td[^>]*>(.*?)</td>");
+                            Matcher matcher = specPattern.matcher(pageSource);
+
+                            while (matcher.find()) {
+                                String key = matcher.group(1).replaceAll("<[^>]*>", "").trim();
+                                String value = matcher.group(2).replaceAll("<[^>]*>", "").trim();
+
+                                if (!key.isEmpty() && !value.isEmpty()) {
+                                    specs.put(key, value);
+                                    specsFound = true;
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Error in direct HTML approach: " + e.getMessage());
+                        }
+                    }
+
+                    // APPROACH 5: Look for specification elements by their text content
+                    if (!specsFound) {
+                        System.out.println("Trying to find specs by text content...");
+                        try {
+                            // Look for common spec categories in Vietnamese phones
+                            String[] specCategories = {
+                                    "Màn hình", "CPU", "RAM", "Bộ nhớ trong", "Camera sau",
+                                    "Camera trước", "Pin", "Hệ điều hành", "Độ phân giải"
+                            };
+
+                            for (String category : specCategories) {
+                                try {
+                                    List<WebElement> elements = driver.findElements(
+                                            By.xpath("//*[contains(text(), '" + category + "')]"));
+
+                                    for (WebElement element : elements) {
+                                        String text = element.getText().trim();
+                                        if (text.contains(":")) {
+                                            String[] parts = text.split(":", 2);
+                                            if (parts.length == 2) {
+                                                specs.put(parts[0].trim(), parts[1].trim());
+                                                specsFound = true;
+                                            }
+                                        } else {
+                                            // Try to find the value in a nearby element
+                                            try {
+                                                WebElement parent = element.findElement(By.xpath("./.."));
+                                                WebElement valueElement = parent.findElement(
+                                                        By.xpath(".//td[2] | .//span[2] | .//div[2]"));
+
+                                                String value = valueElement.getText().trim();
+                                                if (!value.isEmpty()) {
+                                                    specs.put(category, value);
+                                                    specsFound = true;
+                                                }
+                                            } catch (Exception nearbyEx) {
+                                                // No nearby value element found
+                                            }
+                                        }
+                                    }
+                                } catch (Exception catEx) {
+                                    // Continue to next category
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Error in text content approach: " + e.getMessage());
+                        }
+                    }
+
+                    // APPROACH 6: Try to extract using JavaScript
+                    if (!specsFound) {
+                        System.out.println("Trying JavaScript approach...");
+                        try {
+                            // Try to extract specs data via JavaScript
+                            Object result = ((JavascriptExecutor) driver).executeScript(
+                                    "const specs = {}; " +
+                                            "document.querySelectorAll('table tr').forEach(row => { " +
+                                            "  const cells = row.querySelectorAll('td, th'); " +
+                                            "  if (cells.length >= 2) { " +
+                                            "    const key = cells[0].textContent.trim(); " +
+                                            "    const value = cells[1].textContent.trim(); " +
+                                            "    if (key && value) specs[key] = value; " +
+                                            "  } " +
+                                            "}); " +
+                                            "return specs;"
+                            );
+
+                            if (result instanceof Map) {
+                                @SuppressWarnings("unchecked")
+                                Map<String, String> jsSpecs = (Map<String, String>) result;
+                                specs.putAll(jsSpecs);
+                                if (!jsSpecs.isEmpty()) {
+                                    specsFound = true;
+                                    System.out.println("Found " + jsSpecs.size() + " specifications via JavaScript");
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Error in JavaScript approach: " + e.getMessage());
+                        }
+                    }
+
+                    // Update the product with the collected specifications
+                    if (specsFound) {
+                        System.out.println("Successfully extracted " + specs.size() + " specifications for: " + product.getName());
+                        specs.forEach((k, v) -> System.out.println("  - " + k + ": " + v));
+                    } else {
+                        System.err.println("No specifications found for: " + product.getName());
+                    }
+
+                    product.setSpecifications(specs);
+                    product.organizeSpecificationsIntoCategories();
 
                     // Extract Rating - Multiple approaches for different page formats
                     boolean ratingFound = false;
-                    
+
                     // Approach 1: Direct rating display like "4.0/5"
                     try {
                         for (String selector : DETAIL_RATING_SELECTOR.split(",")) {
@@ -245,15 +513,15 @@ public class WebScraper {
                                 WebElement ratingElement = driver.findElement(By.cssSelector(selector.trim()));
                                 String ratingText = ratingElement.getText().trim();
                                 System.out.println("Found rating text: " + ratingText);
-                                
+
                                 // Extract number before "/5" if present
                                 if (ratingText.contains("/")) {
                                     ratingText = ratingText.split("/")[0].trim();
                                 }
-                                
+
                                 // Remove any non-numeric chars except decimal point
                                 ratingText = ratingText.replaceAll("[^0-9.,]", "").replace(",", ".");
-                                
+
                                 if (!ratingText.isEmpty()) {
                                     double rating = Double.parseDouble(ratingText);
                                     product.setOverallRating(rating);
@@ -268,33 +536,33 @@ public class WebScraper {
                     } catch (Exception e) {
                         System.err.println("Error in approach 1 for rating: " + e.getMessage());
                     }
-                    
+
                     // Approach 2: Count filled stars if approach 1 failed
                     if (!ratingFound) {
                         try {
                             // Try multiple possible star selectors
                             String[] starSelectors = {
-                                "div.rating i.fa-star", 
-                                "div.rating span.fa", 
-                                "div.rating-stars i", 
+                                "div.rating i.fa-star",
+                                "div.rating span.fa",
+                                "div.rating-stars i",
                                 "div.rating-overview i.fas"
                             };
-                            
+
                             for (String selector : starSelectors) {
                                 List<WebElement> starElements = driver.findElements(By.cssSelector(selector));
                                 if (!starElements.isEmpty()) {
                                     int filledStars = 0;
                                     int totalStars = starElements.size();
-                                    
+
                                     for (WebElement star : starElements) {
                                         String classes = star.getAttribute("class") + " " + star.getCssValue("color");
-                                        if (classes.contains("fa-solid") || classes.contains("active") || 
+                                        if (classes.contains("fa-solid") || classes.contains("active") ||
                                             classes.contains("checked") || classes.contains("fas fa-star") ||
                                             classes.contains("rgb(255, 193, 7)") || classes.contains("#ffc107")) {
                                             filledStars++;
                                         }
                                     }
-                                    
+
                                     if (totalStars > 0) {
                                         double rating = (double) filledStars;
                                         product.setOverallRating(rating);
@@ -308,7 +576,7 @@ public class WebScraper {
                             System.err.println("Rating not found using star method: " + sEx.getMessage());
                         }
                     }
-                    
+
                     // Approach 3: Look for text containing rating information
                     if (!ratingFound) {
                         try {
@@ -316,7 +584,7 @@ public class WebScraper {
                             String pageSource = driver.getPageSource().toLowerCase();
                             Pattern ratingPattern = Pattern.compile("([0-9],[0-9]|[0-9]\\.[0-9])/5");
                             Matcher matcher = ratingPattern.matcher(pageSource);
-                            
+
                             if (matcher.find()) {
                                 String ratingStr = matcher.group(1).replace(",", ".");
                                 double rating = Double.parseDouble(ratingStr);
@@ -328,7 +596,7 @@ public class WebScraper {
                             System.err.println("Rating not found using regex: " + e.getMessage());
                         }
                     }
-                    
+
                     if (!ratingFound) {
                         System.err.println("Could not find rating for: " + product.getName());
                         product.setOverallRating(0.0);
@@ -336,7 +604,7 @@ public class WebScraper {
 
                     // Extract Review Count - Multiple approaches
                     boolean reviewCountFound = false;
-                    
+
                     // Approach 1: Try direct selectors
                     try {
                         for (String selector : DETAIL_REVIEW_COUNT_SELECTOR.split(",")) {
@@ -344,7 +612,7 @@ public class WebScraper {
                                 WebElement reviewCountElement = driver.findElement(By.cssSelector(selector.trim()));
                                 String reviewCountText = reviewCountElement.getText().trim();
                                 System.out.println("Found review count text: " + reviewCountText);
-                                
+
                                 // Extract numbers only
                                 Pattern pattern = Pattern.compile("\\d+");
                                 Matcher matcher = pattern.matcher(reviewCountText);
@@ -362,7 +630,7 @@ public class WebScraper {
                     } catch (Exception e) {
                         System.err.println("Error in approach 1 for review count: " + e.getMessage());
                     }
-                    
+
                     // Approach 2: Look for review links with counts
                     if (!reviewCountFound) {
                         try {
@@ -371,12 +639,12 @@ public class WebScraper {
                                 "div.rating-overview + a",
                                 "a.rating-link"
                             };
-                            
+
                             for (String xpathSelector : reviewLinkSelectors) {
                                 try {
                                     List<WebElement> elements = driver.findElements(By.xpath(
                                         "//a[contains(text(),'đánh giá') or contains(text(),'nhận xét') or contains(text(),'review')]"));
-                                    
+
                                     for (WebElement element : elements) {
                                         String text = element.getText().trim();
                                         Pattern pattern = Pattern.compile("\\d+");
@@ -389,9 +657,9 @@ public class WebScraper {
                                             break;
                                         }
                                     }
-                                    
+
                                     if (reviewCountFound) break;
-                                    
+
                                 } catch (Exception e) {
                                     // Try next selector
                                 }
@@ -400,7 +668,7 @@ public class WebScraper {
                             System.err.println("Error in approach 2 for review count: " + e.getMessage());
                         }
                     }
-                    
+
                     // Approach 3: Count actual review items
                     if (!reviewCountFound) {
                         try {
@@ -422,7 +690,7 @@ public class WebScraper {
                             System.err.println("Error in approach 3 for review count: " + e.getMessage());
                         }
                     }
-                    
+
                     // Approach 4: Check page source for review count patterns
                     if (!reviewCountFound) {
                         try {
@@ -439,7 +707,7 @@ public class WebScraper {
                             System.err.println("Error in approach 4 for review count: " + e.getMessage());
                         }
                     }
-                    
+
                     if (!reviewCountFound) {
                         // Look at the blue link text in your screenshot that says "1 đánh giá"
                         try {
@@ -457,7 +725,7 @@ public class WebScraper {
                             System.err.println("Error in final approach for review count: " + e.getMessage());
                         }
                     }
-                    
+
                     if (!reviewCountFound) {
                         System.err.println("Could not find review count for: " + product.getName());
                         product.setReviewCount(0);
@@ -468,18 +736,18 @@ public class WebScraper {
                     	List<Map<String, String>> reviews = new ArrayList<>();
                     	try {
                     	    System.out.println("Looking for reviews...");
-                    	    
+
                     	    // Find review items directly - based on the example image format
                     	    List<WebElement> reviewItems = new ArrayList<>();
-                    	    
+
                     	    // Try multiple possible selectors for review containers
                     	    String[] reviewContainerSelectors = {
-                    	        "div.comment-list", 
+                    	        "div.comment-list",
                     	        "div.list-comment",
                     	        "div.review-list",
                     	        "div.ratings-reviews"
                     	    };
-                    	    
+
                     	    WebElement reviewContainer = null;
                     	    for (String selector : reviewContainerSelectors) {
                     	        try {
@@ -493,17 +761,17 @@ public class WebScraper {
                     	            // Try next selector
                     	        }
                     	    }
-                    	    
+
                     	    // If container found, look for review items within it
                     	    if (reviewContainer != null) {
                     	        // Try various selectors for individual review items
                     	        String[] reviewItemSelectors = {
-                    	            "div.comment-item", 
+                    	            "div.comment-item",
                     	            "div.item-comment",
                     	            "div.review-item",
                     	            "> div" // Direct children
                     	        };
-                    	        
+
                     	        for (String selector : reviewItemSelectors) {
                     	            try {
                     	                List<WebElement> items = reviewContainer.findElements(By.cssSelector(selector));
@@ -529,15 +797,15 @@ public class WebScraper {
                     	            System.err.println("Error in direct review search: " + ex.getMessage());
                     	        }
                     	    }
-                    	    
+
                     	    System.out.println("Found " + reviewItems.size() + " potential review items");
-                    	    
+
                     	    // Process each review item (limit to 10 for efficiency)
                     	    int reviewsToProcess = Math.min(reviewItems.size(), 10);
                     	    for (int i = 0; i < reviewsToProcess; i++) {
                     	        WebElement reviewItem = reviewItems.get(i);
                     	        Map<String, String> review = new HashMap<>();
-                    	        
+
                     	        // Extract author name - look for strong element first (as in the example)
                     	        try {
                     	            WebElement authorElement = reviewItem.findElement(By.cssSelector("strong"));
@@ -553,7 +821,7 @@ public class WebScraper {
                     	            try {
                     	                List<WebElement> possibleNameElements = reviewItem.findElements(
                     	                    By.cssSelector("div.user-name, div.comment-user-name, h4, h5"));
-                    	                
+
                     	                for (WebElement element : possibleNameElements) {
                     	                    String text = element.getText().trim();
                     	                    if (!text.isEmpty() && text.length() < 50) { // Reasonable name length
@@ -561,7 +829,7 @@ public class WebScraper {
                     	                        break;
                     	                    }
                     	                }
-                    	                
+
                     	                if (!review.containsKey("author")) {
                     	                    review.put("author", "Anonymous");
                     	                }
@@ -569,18 +837,18 @@ public class WebScraper {
                     	                review.put("author", "Anonymous");
                     	            }
                     	        }
-                    	        
+
                     	        // Extract rating - look for star elements as in the example
                     	        try {
                     	            // Count filled stars (★) or look for rating text
                     	            List<WebElement> starElements = reviewItem.findElements(
                     	                By.cssSelector("i.fa-star, span.fa, i.fas"));
-                    	            
+
                     	            if (!starElements.isEmpty()) {
                     	                int filledStars = 0;
                     	                for (WebElement star : starElements) {
                     	                    String classes = star.getAttribute("class");
-                    	                    if (classes.contains("fa-solid") || classes.contains("fas") || 
+                    	                    if (classes.contains("fa-solid") || classes.contains("fas") ||
                     	                        classes.contains("active") || classes.contains("checked") ||
                     	                        !classes.contains("fa-star-o")) {
                     	                        filledStars++;
@@ -599,7 +867,7 @@ public class WebScraper {
                     	                    if (match.contains("★")) {
                     	                        review.put("rating", String.valueOf(match.length()));
                     	                    } else if (match.contains("/")) {
-                    	                        review.put("rating", match.substring(0, 1));  
+                    	                        review.put("rating", match.substring(0, 1));
                     	                    } else if (match.contains("sao")) {
                     	                        review.put("rating", match.substring(0, 1));
                     	                    }
@@ -608,7 +876,7 @@ public class WebScraper {
                     	        } catch (Exception e) {
                     	            // Rating is optional
                     	        }
-                    	        
+
                     	        // Extract date - format in example is DD/MM/YYYY
                     	        try {
                     	            // Look for date format text
@@ -626,7 +894,7 @@ public class WebScraper {
                     	        } catch (Exception e) {
                     	            // Date is optional
                     	        }
-                    	        
+
                     	        // Extract review content
                     	        try {
                     	            WebElement contentElement = reviewItem.findElement(
@@ -639,7 +907,7 @@ public class WebScraper {
                     	            // If specific content element not found, extract text excluding author/date
                     	            try {
                     	                String fullText = reviewItem.getText();
-                    	                
+
                     	                // Remove author and date from text
                     	                if (review.containsKey("author")) {
                     	                    fullText = fullText.replace(review.get("author"), "");
@@ -647,13 +915,13 @@ public class WebScraper {
                     	                if (review.containsKey("date")) {
                     	                    fullText = fullText.replace(review.get("date"), "");
                     	                }
-                    	                
+
                     	                // Remove common UI elements text
                     	                fullText = fullText.replaceAll("Đã mua tại CellphoneS", "");
                     	                fullText = fullText.replaceAll("\\d{1,2}/\\d{1,2}/\\d{4}", "");
                     	                fullText = fullText.replaceAll("\\★{1,5}", "");
                     	                fullText = fullText.replaceAll("\\d sao", "");
-                    	                
+
                     	                // Clean and trim result
                     	                fullText = fullText.trim();
                     	                if (!fullText.isEmpty()) {
@@ -664,12 +932,12 @@ public class WebScraper {
                     	                review.put("content", "");
                     	            }
                     	        }
-                    	        
+
                     	        // Look for verification badges as in the example ("Đã mua tại CellphoneS")
                     	        try {
                     	            List<WebElement> badges = reviewItem.findElements(
                     	                By.cssSelector("div.badge, span.badge, div.verified-badge"));
-                    	            
+
                     	            if (!badges.isEmpty()) {
                     	                for (WebElement badge : badges) {
                     	                    String badgeText = badge.getText().trim();
@@ -689,14 +957,14 @@ public class WebScraper {
                     	        } catch (Exception e) {
                     	            // Verification badge is optional
                     	        }
-                    	        
+
                     	        // Add the review if we have at least author or content
                     	        if (review.containsKey("author") || review.containsKey("content")) {
                     	            reviews.add(review);
                     	            System.out.println("Added review from: " + review.getOrDefault("author", "Anonymous"));
                     	        }
                     	    }
-                    	    
+
                     	    // Update review count and add reviews to product
                     	    if (!reviews.isEmpty()) {
                     	        if (product.getReviewCount() < reviews.size()) {
@@ -705,7 +973,7 @@ public class WebScraper {
                     	        product.addCategoryData("reviews", reviews);
                     	        System.out.println("Added " + reviews.size() + " reviews to product");
                     	    }
-                    	    
+
                     	} catch (Exception e) {
                     	    System.err.println("Error extracting reviews: " + e.getMessage());
                     	}
@@ -778,17 +1046,17 @@ public class WebScraper {
             if (products != null && !products.isEmpty()) {
                 System.out.println("\nSample product data:");
                 System.out.println(products.get(0));
-                
+
                 if (products.get(0).getSpecifications() != null && !products.get(0).getSpecifications().isEmpty()) {
                     System.out.println("Specifications sample:");
-                    products.get(0).getSpecifications().forEach((k, v) -> 
+                    products.get(0).getSpecifications().forEach((k, v) ->
                         System.out.println("  " + k + ": " + v)
                     );
                 }
-                
+
                 if (products.get(0).getCategoryData() != null && !products.get(0).getCategoryData().isEmpty()) {
                     System.out.println("Category data sample:");
-                    products.get(0).getCategoryData().forEach((k, v) -> 
+                    products.get(0).getCategoryData().forEach((k, v) ->
                         System.out.println("  " + k + ": " + v)
                     );
                 }

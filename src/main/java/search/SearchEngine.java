@@ -62,4 +62,3 @@ abstract class SearchEngine {
         return null;
     }
 }
-
