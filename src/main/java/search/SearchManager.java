@@ -184,7 +184,7 @@ class SearchManager {
     }
 
     public static void main(String[] args) {
-        String dataSource = "products.json"; // Path to your JSON data file
+        String dataSource = "src/main/resources/products.json"; // Path to your JSON data file
         try {
             // SearchManager now requires BrandFilterEngine to be initialized
             // Ensure BrandFilterEngine is the version that checks the "name" field
