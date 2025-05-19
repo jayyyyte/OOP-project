@@ -74,7 +74,7 @@ public class SearchCLI {
 
     public static void main(String[] args) {
         // Update path to point to resources directory
-        String dataSource = "src/main/resources/products.json";
+        String dataSource =  "src/main/resources/products.json";
         try {
             SearchCLI cli = new SearchCLI(dataSource);
             cli.start();
