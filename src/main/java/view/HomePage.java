@@ -241,6 +241,14 @@ public class HomePage {
         searchField.setPrefWidth(400);
         searchField.getStyleClass().add("search-field");
         
+        // Add search functionality
+        searchField.setOnAction(e -> {
+            String query = searchField.getText().trim();
+            if (!query.isEmpty()) {
+                Router.navigateTo(new SearchResultsPage(query).createScene());
+            }
+        });
+        
         // Navigation buttons
         Button categoryBtn = new Button("Danh muc");
         Button locationBtn = new Button("Dia diem");
@@ -542,12 +550,6 @@ public class HomePage {
         Label benefitLabel = new Label("Smember giảm thêm đến 310.000đ");
         benefitLabel.setFont(Font.font("System", 12));
         card.getChildren().add(benefitLabel);
-        
-        // // Installment info
-        // Label installmentLabel = new Label("Khong phi chuyen doi khi tra gop 0% qua the tin dung ky han 3-6 thang");
-        // installmentLabel.setFont(Font.font("System", 12));
-        // installmentLabel.setWrapText(true);
-        // card.getChildren().add(installmentLabel);
         
         // Rating and like button
         HBox bottomRow = new HBox();
