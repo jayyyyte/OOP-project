@@ -3,7 +3,7 @@ package scraper.model;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Product {
+public class Product extends AbstractProduct {
     private String name;
     private String productUrl;
     private String imageUrl;
@@ -14,33 +14,6 @@ public class Product {
     private double overallRating;
     private int reviewCount;
     private Map<String, Object> categoryData;
-
-    public Product() {
-        this.specifications = new HashMap<>();
-        this.categoryData = new HashMap<>();
-    }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getProductUrl() { return productUrl; }
-    public void setProductUrl(String productUrl) { this.productUrl = productUrl; }
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
-    public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
-    public String getPriceCurrency() { return priceCurrency; }
-    public void setPriceCurrency(String priceCurrency) { this.priceCurrency = priceCurrency; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public Map<String, String> getSpecifications() { return specifications; }
-    public void setSpecifications(Map<String, String> specifications) { this.specifications = specifications; }
-    public double getOverallRating() { return overallRating; }
-    public void setOverallRating(double overallRating) { this.overallRating = overallRating; }
-    public int getReviewCount() { return reviewCount; }
-    public void setReviewCount(int reviewCount) { this.reviewCount = reviewCount; }
-    public Map<String, Object> getCategoryData() { return categoryData; }
-    public void setCategoryData(Map<String, Object> categoryData) { this.categoryData = categoryData; }
-    public void addCategoryData(String category, Object value) { this.categoryData.put(category, value); }
 
     public static double parsePrice(String priceText) {
         if (priceText == null || priceText.trim().isEmpty()) {
@@ -66,6 +39,7 @@ public class Product {
         }
     }
 
+    @Override
     public void organizeSpecificationsIntoCategories() {
         Map<String, Object> techSpecs = new HashMap<>();
         Map<String, Object> displayInfo = new HashMap<>();
