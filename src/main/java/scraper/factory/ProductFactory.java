@@ -1,7 +1,9 @@
 package scraper.factory;
 
 import scraper.model.AbstractProduct;
-import scraper.model.Product;
+import scraper.model.Smartphone;
+
+import java.util.Map;
 
 /**
  * Base factory interface for creating product objects
@@ -34,4 +36,8 @@ public interface ProductFactory {
     AbstractProduct createProductWithDetails(String name, String productUrl, String imageUrl,
                                              double price, String description,
                                              double overallRating, int reviewCount);
+
+    AbstractProduct createProduct(String name, String productUrl, String imageUrl, double price, String priceCurrency,
+                             String description, Map<String, String> specifications, double overallRating,
+                             int reviewCount, Map<String, Object> categoryData);
 }

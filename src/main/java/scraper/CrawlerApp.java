@@ -9,24 +9,11 @@ import scraper.crawler.smartphone.HoangHaMobileCrawler;
 import scraper.model.Product;
 import scraper.util.JsonSerializer;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
 public class CrawlerApp {
     public static void main(String[] args) {
-        // Debug: List resources in config directory
-        try {
-            Enumeration<URL> resources = CrawlerApp.class.getClassLoader().getResources("config");
-            while (resources.hasMoreElements()) {
-                System.out.println("Found config resource: " + resources.nextElement());
-            }
-        } catch (IOException e) {
-            System.err.println("Error listing config resources: " + e.getMessage());
-        }
-
         List<Crawler> crawlers = new ArrayList<>();
         try {
             crawlers.add(new CellphoneSCrawler(ConfigLoader.loadConfig("cellphones_smartphone.properties")));
@@ -34,14 +21,26 @@ public class CrawlerApp {
             crawlers.add(new CellphoneSLCrawler(ConfigLoader.loadConfig("cellphones_laptop.properties")));
             crawlers.add(new Laptop88Crawler(ConfigLoader.loadConfig("laptop88.properties")));
 
-            List<Product> allProducts = new ArrayList<>();
+            List<Product> smartphones = new ArrayList<>();
+            List<Product> laptops = new ArrayList<>();
+
             for (Crawler crawler : crawlers) {
-                allProducts.addAll(crawler.crawl(2));
+                List<Product> products = crawler.crawl(20); // Crawl 2 products per site
+                for (Product product : products) {
+                    if ("Smartphone".equals(product.getCategoryData().get("category"))) {
+                        smartphones.add(product);
+                    } else if ("Laptop".equals(product.getCategoryData().get("category"))) {
+                        laptops.add(product);
+                    }
+                }
                 crawler.close();
             }
 
-            JsonSerializer.saveToJson(allProducts, "products.json");
-            System.out.println("Total products scraped: " + allProducts.size());
+            JsonSerializer.saveToJson(smartphones, "smartphones.json");
+            JsonSerializer.saveToJson(laptops, "laptops.json");
+
+            System.out.println("Total smartphones scraped: " + smartphones.size());
+            System.out.println("Total laptops scraped: " + laptops.size());
         } catch (Exception e) {
             System.err.println("Error running crawlers: " + e.getMessage());
             crawlers.forEach(Crawler::close);

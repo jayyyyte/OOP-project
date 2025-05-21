@@ -7,10 +7,6 @@ public class Review {
     private String date;
     private boolean verifiedPurchase;
 
-    public Review() {
-        // Default constructor
-    }
-
     public Review(String author, String content, double rating, String date, boolean verifiedPurchase) {
         this.author = author;
         this.content = content;
@@ -30,13 +26,4 @@ public class Review {
     public void setDate(String date) { this.date = date; }
     public boolean isVerifiedPurchase() { return verifiedPurchase; }
     public void setVerifiedPurchase(boolean verifiedPurchase) { this.verifiedPurchase = verifiedPurchase; }
-
-    @Override
-    public String toString() {
-        return "Review{" +
-                "author='" + author + '\'' +
-                ", rating=" + rating +
-                ", date='" + date + '\'' +
-                '}';
-    }
 }
