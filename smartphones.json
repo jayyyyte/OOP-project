@@ -48,6 +48,7 @@
     "price": 5490.0,
     "priceCurrency": "VND",
     "description": "Tản nhiệt thông minh với ống đồng, cao hơn 12,5% so với thế hệ trước, giúp thiết bị hoạt động ổn định\nPin lớn 5200 mAh, thiết kế mỏng nhẹ, độ bền cao với công nghệ xả chậm cho thời gian sử dụng lâu dài\nHiệu năng mạnh mẽ, chip Mediatek Helio G100 kết hợp với RAM 8GB và ROM 256GB, đáp ứng mọi nhu cầu sử dụng\nCamera chất lượng cao với camera sau 50MP, 8MP góc rộng và camera trước 32MP, cho hình ảnh sắc nét và sống động\nNút bấm Flashsnap, chụp nhanh chỉ với một chạm, hoàn hảo cho những khoảnh khắc bất ngờ",
+<<<<<<< HEAD
     "specifications": {
       "RAM/ROM": "8/256 12/256"
     },
@@ -866,37 +867,105 @@
     "price": 44990.0,
     "priceCurrency": "VND",
     "description": "Chip Snapdragon 8 Elite, RAM 16GB, bộ nhớ trong 512GB, xử lý mượt mà mọi tác vụ\nMàn hình AMOLED 8.12\" (trong) \u0026 6.62\" (ngoài), tần số quét 120Hz, hiển thị sắc nét\nCamera chính \u0026 tele 50MP, góc rộng 8MP, chụp ảnh sắc nét, zoom quang học ấn tượng\nDung lượng 5,600mAh, sạc nhanh 80W, sử dụng cả ngày dài",
+=======
+>>>>>>> d96b4668f0e0014fe25ab2ce51bc67ad3afdd3a7
     "specifications": {
-      "Tính năng màn hình\nTần số": "120Hz\nMàn hình chính: Kính Pet+UTG, 1400nit\nMàn hình ngoài: 6.62 inch, 1140 x 2616 (FHD+), kính siêu mỏng Nanocrytal, 1600nit\n1 tỷ màu sắc",
-      "Camera trước\nMàn hình chính": "8MP, ƒ/2.4\nMàn hình ngoài: 8MP, ƒ/2.4"
+      "RAM/ROM": "8/256 12/256"
     },
     "overallRating": 5.0,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
       "category": "Smartphone",
-      "brand": "Oppo",
-      "cameraInfo": {
-        "Camera trước\nMàn hình chính": "8MP, ƒ/2.4\nMàn hình ngoài: 8MP, ƒ/2.4"
+      "techSpecs": {
+        "RAM/ROM": "8/256 12/256"
       }
     }
   },
   {
-    "name": "iPhone 13 128GB | Chính hãng VN/A",
-    "productUrl": "https://cellphones.com.vn/iphone-13.html",
-    "imageUrl": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/1/5/15_2_7_2_5.jpg",
-    "price": 11590.0,
+    "name": "TECNO CAMON 40 8GB 128GB",
+    "productUrl": "https://cellphones.com.vn/dien-thoai-tecno-camon-40.html",
+    "imageUrl": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/d/i/dien-thoai-tecno-camon-40_1_.png",
+    "price": 5190.0,
     "priceCurrency": "VND",
+    "description": "Tản nhiệt thông minh, tăng hiệu quả tản nhiệt lên 12,5% so với thế hệ trước, bảo đảm hoạt động ổn định\nPin lớn 5200 mAh thiết kế mỏng nhẹ, độ bền cao với công nghệ xả chậm, cho thời gian sử dụng lâu dài\nHiệu năng mạnh mẽ, chip Mediatek Helio G100 kết hợp với RAM 8GB và ROM 128GB, đáp ứng mọi nhu cầu sử dụng\nCamera chất lượng cao, camera sau 50MP, 8MP góc rộng và camera trước 32MP, mang lại hình ảnh sắc nét và sống động\nNút bấm Flashsnap, chụp nhanh chỉ với một chạm, lý tưởng cho những khoảnh khắc bất ngờ",
+    "specifications": {
+      "Nano-SIM Hệ điều hành": "Android 15",
+      "Thông số": "TECNO CAMON 40 8GB 128GB",
+      "Helio G99 Ultimate(6nm) Công nghệ NFC": "Có",
+      "Tần số quét 120Hz    Điện thoại TECNO CAMON 40 – Mặt lưng ấn tượng cùng camera chất lượng cao   Điện thoại TECNO CAMON 40  là một trong những cái tên đáng chú ý trong phân khúc điện thoại tầm trung. Với thiết kế trẻ trung, cấu hình ổn định và đặc biệt là khả năng chụp ảnh ấn tượng, nó sẽ mang đến những trải nghiệm tuyệt vời cho người dùng.  Sức mạnh trong tầm tay với chip\u0026nbsp;MediaTek Helio G100 Ultimate TECNO CAMON 40 mang trong mình sức mạnh từ bộ vi xử lý\u0026nbsp;MediaTek Helio G100 Ultimate – một con chip được sản xuất trên tiến trình 6nm tiên tiến, mang đến sự cân bằng giữa hiệu suất và tiết kiệm năng lượng. Hệ thống tản nhiệt cũng được cải tiến, đảm bảo máy luôn mát mẻ ngay cả khi bạn chơi game liên tục hoặc thực hiện các tác vụ nặng.  Điện thoại còn hỗ trợ công nghệ mở rộng RAM, cho phép tăng dung lượng RAM lên gấp đôi, giúp đa nhiệm mượt mà và không còn hiện tượng giật lag. Bộ nhớ trong cao mang lại không gian lưu trữ rộng lớn, thoải mái để bạn lưu giữ ảnh, video và ứng dụng yêu thích.  Nhiếp ảnh di động trong một chiếc điện thoại  Với cụm camera sau ấn tượng 50MP cảm biến lớn giúp thu sáng tốt hơn, mang đến những bức ảnh sắc nét và chi tiết đáng kinh ngạc. Tính năng chống rung quang học (OIS) và chống rung điện tử (EIS) không chỉ đảm bảo độ ổn định khi quay video mà còn hỗ trợ bạn chụp ảnh sắc nét trong những khoảnh khắc di chuyển.  Camera góc siêu rộng 8MP mở rộng khung hình, lý tưởng cho ảnh phong cảnh hoặc ảnh nhóm. Không dừng lại ở đó, camera selfie 32MP với công nghệ lấy nét thông minh luôn đảm bảo đôi mắt của bạn là tâm điểm trong mọi khung hình.  Trải nghiệm liền mạch và thưởng thức hình ảnh mãn nhãn   Điện thoại TECNO CAMON 40  được trang bị viên pin 5200mAh, mang lại thời lượng sử dụng kéo dài bền bỉ. Công nghệ sạc nhanh 45W tuy không phải lớn trong phân khúc nhưng vẫn đủ để sạc đầy pin trong khoảng 1 giờ, giúp bạn tiết kiệm thời gian và sẵn sàng cho mọi hoạt động. Viên pin này không chỉ bền bỉ mà còn duy trì hiệu suất cao ngay cả sau nhiều chu kỳ sạc.  Bên cạnh đó là màn hình AMOLED\u0026nbsp;6.78 inch với độ phân giải FHD+ và tần số quét 120Hz mang đến trải nghiệm hiển thị tuyệt vời. ông nghệ giảm ánh sáng xanh TÜV Rheinland bảo vệ đôi mắt, mang đến sự thoải mái khi sử dụng trong thời gian dài.   Điện thoại TECNO CAMON 40 sẽ ra mắt khi nào?  TECNO CAMON 40 chính thức được trình làng vào sự kiện\u0026nbsp;MWC 2025 diễn ra đầu tháng 3 năm 2025. Tại sự kiện này, ngoài\u0026nbsp;TECNO CAMON 40 thì Tecno còn giới thiệu thêm 3 phiên bản khác là\u0026nbsp;Pro, Pro 5G và Premier 5G.\u0026nbsp;  Bên cạnh đó, CAMON 40 sẽ mang đến bốn tùy chọn màu sắc hiện đại và cuốn hút: Đen, Trắng và hai phiên bản xanh bắt mắt. Mỗi màu sắc không chỉ phản ánh phong cách cá nhân mà còn góp phần tăng thêm vẻ đẹp thời thượng cho sản phẩm.  Giá bán của điện thoại TECNO CAMON 40 bao nhiêu? Là sản phẩm giá rẻ tầm trung, điện thoại\u0026nbsp;TECNO CAMON 40 sẽ được lên kệ với mức giá từ 5 - 7 triệu đồng, tùy vào từng phiên bản cấu hình khác nhau.\u0026nbsp;Đây là một mức giá cực kỳ hấp dẫn, mang lại giá trị vượt trội so với những gì mà chiếc điện thoại này sở hữu.  Ở mức giá này, CAMON 40 sẽ là đối thủ cạnh tranh đáng gờm với nhiều dòng điện thoại khác trên thị trường. TECNO đã khéo léo định giá sản phẩm để tiếp cận nhiều đối tượng khách hàng hơn, từ học sinh, sinh viên đến những người yêu thích nhiếp ảnh.\u0026nbsp; Chi tiết giá bán tại CellphoneS như sau: Tên sản phẩm": "Giá bán",
+      "5000 mAh Thẻ SIM": "2 Nano-SIM",
+      "TECNO CAMON 30 8GB 256GB Kích thước màn hình": "6.78 inches",
+      "Camera đơn: 50 MP (Góc rộng), Tự động lấy nét (PDAF)Đèn flash LED képĐộ phân giải video: 1440p @ 30 fps, 1080p @ 30/60 fps Chipset": "Mediatek Helio G100 Ultimate",
+      "8 GB Bộ nhớ trong": "128 GB",
+      "6.78 inches Công nghệ màn hình": "AMOLED",
+      "AMOLED Camera sau": "50MP, ƒ/1.8Góc siêu rộng 8MP",
+      "Camera kép:50 MP, ƒ/1.9 (Góc rộng), 1/1.57\" Kích thước cảm biến, chống rung quang học (OIS) + chống rung điện tử (EIS)2 MP (Chiều sâu)Đèn flash LED kép, Dải động cao (HDR), Toàn cảnhĐộ phân giải video: 1440p @ 30 fps, 1080p @ 30/60 fps Camera trước": "32MP",
+      "Android 14 (Upside Down Cake) Tính năng màn hình": "Màn hình phẳngFHD+Tần số quét 120HzĐộ sáng màn hình 1300 nitsHDR",
+      "Có Dung lượng RAM": "8 GB",
+      "256 GB Pin": "5200 mAh"
+    },
+    "overallRating": 5.0,
+    "reviewCount": 0,
+    "categoryData": {
+      "reviews": [],
+      "connectivityInfo": {
+        "Helio G99 Ultimate(6nm) Công nghệ NFC": "Có"
+      },
+      "category": "Smartphone",
+      "techSpecs": {
+        "Tần số quét 120Hz    Điện thoại TECNO CAMON 40 – Mặt lưng ấn tượng cùng camera chất lượng cao   Điện thoại TECNO CAMON 40  là một trong những cái tên đáng chú ý trong phân khúc điện thoại tầm trung. Với thiết kế trẻ trung, cấu hình ổn định và đặc biệt là khả năng chụp ảnh ấn tượng, nó sẽ mang đến những trải nghiệm tuyệt vời cho người dùng.  Sức mạnh trong tầm tay với chip\u0026nbsp;MediaTek Helio G100 Ultimate TECNO CAMON 40 mang trong mình sức mạnh từ bộ vi xử lý\u0026nbsp;MediaTek Helio G100 Ultimate – một con chip được sản xuất trên tiến trình 6nm tiên tiến, mang đến sự cân bằng giữa hiệu suất và tiết kiệm năng lượng. Hệ thống tản nhiệt cũng được cải tiến, đảm bảo máy luôn mát mẻ ngay cả khi bạn chơi game liên tục hoặc thực hiện các tác vụ nặng.  Điện thoại còn hỗ trợ công nghệ mở rộng RAM, cho phép tăng dung lượng RAM lên gấp đôi, giúp đa nhiệm mượt mà và không còn hiện tượng giật lag. Bộ nhớ trong cao mang lại không gian lưu trữ rộng lớn, thoải mái để bạn lưu giữ ảnh, video và ứng dụng yêu thích.  Nhiếp ảnh di động trong một chiếc điện thoại  Với cụm camera sau ấn tượng 50MP cảm biến lớn giúp thu sáng tốt hơn, mang đến những bức ảnh sắc nét và chi tiết đáng kinh ngạc. Tính năng chống rung quang học (OIS) và chống rung điện tử (EIS) không chỉ đảm bảo độ ổn định khi quay video mà còn hỗ trợ bạn chụp ảnh sắc nét trong những khoảnh khắc di chuyển.  Camera góc siêu rộng 8MP mở rộng khung hình, lý tưởng cho ảnh phong cảnh hoặc ảnh nhóm. Không dừng lại ở đó, camera selfie 32MP với công nghệ lấy nét thông minh luôn đảm bảo đôi mắt của bạn là tâm điểm trong mọi khung hình.  Trải nghiệm liền mạch và thưởng thức hình ảnh mãn nhãn   Điện thoại TECNO CAMON 40  được trang bị viên pin 5200mAh, mang lại thời lượng sử dụng kéo dài bền bỉ. Công nghệ sạc nhanh 45W tuy không phải lớn trong phân khúc nhưng vẫn đủ để sạc đầy pin trong khoảng 1 giờ, giúp bạn tiết kiệm thời gian và sẵn sàng cho mọi hoạt động. Viên pin này không chỉ bền bỉ mà còn duy trì hiệu suất cao ngay cả sau nhiều chu kỳ sạc.  Bên cạnh đó là màn hình AMOLED\u0026nbsp;6.78 inch với độ phân giải FHD+ và tần số quét 120Hz mang đến trải nghiệm hiển thị tuyệt vời. ông nghệ giảm ánh sáng xanh TÜV Rheinland bảo vệ đôi mắt, mang đến sự thoải mái khi sử dụng trong thời gian dài.   Điện thoại TECNO CAMON 40 sẽ ra mắt khi nào?  TECNO CAMON 40 chính thức được trình làng vào sự kiện\u0026nbsp;MWC 2025 diễn ra đầu tháng 3 năm 2025. Tại sự kiện này, ngoài\u0026nbsp;TECNO CAMON 40 thì Tecno còn giới thiệu thêm 3 phiên bản khác là\u0026nbsp;Pro, Pro 5G và Premier 5G.\u0026nbsp;  Bên cạnh đó, CAMON 40 sẽ mang đến bốn tùy chọn màu sắc hiện đại và cuốn hút: Đen, Trắng và hai phiên bản xanh bắt mắt. Mỗi màu sắc không chỉ phản ánh phong cách cá nhân mà còn góp phần tăng thêm vẻ đẹp thời thượng cho sản phẩm.  Giá bán của điện thoại TECNO CAMON 40 bao nhiêu? Là sản phẩm giá rẻ tầm trung, điện thoại\u0026nbsp;TECNO CAMON 40 sẽ được lên kệ với mức giá từ 5 - 7 triệu đồng, tùy vào từng phiên bản cấu hình khác nhau.\u0026nbsp;Đây là một mức giá cực kỳ hấp dẫn, mang lại giá trị vượt trội so với những gì mà chiếc điện thoại này sở hữu.  Ở mức giá này, CAMON 40 sẽ là đối thủ cạnh tranh đáng gờm với nhiều dòng điện thoại khác trên thị trường. TECNO đã khéo léo định giá sản phẩm để tiếp cận nhiều đối tượng khách hàng hơn, từ học sinh, sinh viên đến những người yêu thích nhiếp ảnh.\u0026nbsp; Chi tiết giá bán tại CellphoneS như sau: Tên sản phẩm": "Giá bán",
+        "Camera đơn: 50 MP (Góc rộng), Tự động lấy nét (PDAF)Đèn flash LED képĐộ phân giải video: 1440p @ 30 fps, 1080p @ 30/60 fps Chipset": "Mediatek Helio G100 Ultimate",
+        "Có Dung lượng RAM": "8 GB"
+      },
+      "cameraInfo": {
+        "AMOLED Camera sau": "50MP, ƒ/1.8Góc siêu rộng 8MP",
+        "Camera kép:50 MP, ƒ/1.9 (Góc rộng), 1/1.57\" Kích thước cảm biến, chống rung quang học (OIS) + chống rung điện tử (EIS)2 MP (Chiều sâu)Đèn flash LED kép, Dải động cao (HDR), Toàn cảnhĐộ phân giải video: 1440p @ 30 fps, 1080p @ 30/60 fps Camera trước": "32MP"
+      }
+    }
+  },
+  {
+    "name": "",
+    "productUrl": "",
+    "price": 34990.00014,
+    "priceCurrency": "VND",
+<<<<<<< HEAD
     "description": "No description available",
     "specifications": {
       "Tên sản phẩm": "Giá bán"
     },
     "overallRating": 5.0,
+=======
+    "specifications": {},
+    "overallRating": 0.0,
+>>>>>>> d96b4668f0e0014fe25ab2ce51bc67ad3afdd3a7
     "reviewCount": 0,
     "categoryData": {
-      "reviews": [],
-      "category": "Smartphone",
-      "brand": "Apple"
+      "category": "Smartphone"
+    }
+  },
+  {
+    "name": "",
+    "productUrl": "",
+    "price": 22990.00018,
+    "priceCurrency": "VND",
+    "specifications": {},
+    "overallRating": 0.0,
+    "reviewCount": 0,
+    "categoryData": {
+      "category": "Smartphone"
+    }
+  },
+  {
+    "name": "",
+    "productUrl": "",
+    "price": 9990.00014,
+    "priceCurrency": "VND",
+    "specifications": {},
+    "overallRating": 0.0,
+    "reviewCount": 0,
+    "categoryData": {
+      "category": "Smartphone"
     }
   },
   {

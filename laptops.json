@@ -23,6 +23,7 @@
     "description": "No description available",
     "specifications": {},
     "overallRating": 5.0,
+<<<<<<< HEAD
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -38,6 +39,8 @@
     "description": "Laptop có màu xám thanh lịch, kiểu dáng mỏng nhẹ, dễ dàng mang theo khi di chuyển.\nMàn hình 14.0 inch WUXGA cung cấp hình ảnh rõ ràng và chi tiết, lý tưởng cho công việc và giải trí.\nTrang bị bộ vi xử lý Copilot+X PLUS X1P và RAM 16GB, máy xử lý mượt mà các tác vụ đa nhiệm.\nỔ cứng 512GB PCIe cho tốc độ truy xuất dữ liệu nhanh, phục vụ tốt cho nhu cầu lưu trữ.\nChạy trên Windows 11, mang lại trải nghiệm người dùng mượt mà với nhiều tính năng hiện đại.",
     "specifications": {},
     "overallRating": 0.0,
+=======
+>>>>>>> d96b4668f0e0014fe25ab2ce51bc67ad3afdd3a7
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -45,6 +48,7 @@
     }
   },
   {
+<<<<<<< HEAD
     "name": "Laptop ASUS Gaming VivoBook K3605ZF-RP634W",
     "productUrl": "https://cellphones.com.vn/laptop-asus-gaming-vivobook-k3605zf-rp634w.html",
     "imageUrl": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/g/r/group_509_-_2024-07-31t163011.265.png",
@@ -384,6 +388,14 @@
     "price": 19490.0,
     "priceCurrency": "VND",
     "description": "Trang bị bộ vi xử lý AMD Ryzen 5 7235HS, hiệu năng mạnh mẽ đáp ứng tốt các nhu cầu sử dụng từ văn phòng đến giải trí.\nRam 12GB cho phép người dùng đa nhiệm mượt mà, trong khi ổ cứng SSD 512GB PCIe cung cấp tốc độ truy xuất nhanh chóng.\nMàn hình 15.6 inch Full HD với tần số quét 144Hz mang đến trải nghiệm hiển thị siêu mượt, lý tưởng cho cả công việc và chơi game.\nCard đồ họa rời NVIDIA GeForce RTX 3050 6GB hỗ trợ tốt các tác vụ đồ họa và chơi game cấu hình cao.",
+=======
+    "name": "Laptop Lenovo IdeaPad Slim 5 14Q8X9 83HL000KVN",
+    "productUrl": "https://cellphones.com.vn/laptop-lenovo-ideapad-slim-5-14q8x9-83hl000kvn.html",
+    "imageUrl": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/g/r/group_658_2.png",
+    "price": 19490.0,
+    "priceCurrency": "VND",
+    "description": "Laptop có màu xám thanh lịch, kiểu dáng mỏng nhẹ, dễ dàng mang theo khi di chuyển.\nMàn hình 14.0 inch WUXGA cung cấp hình ảnh rõ ràng và chi tiết, lý tưởng cho công việc và giải trí.\nTrang bị bộ vi xử lý Copilot+X PLUS X1P và RAM 16GB, máy xử lý mượt mà các tác vụ đa nhiệm.\nỔ cứng 512GB PCIe cho tốc độ truy xuất dữ liệu nhanh, phục vụ tốt cho nhu cầu lưu trữ.\nChạy trên Windows 11, mang lại trải nghiệm người dùng mượt mà với nhiều tính năng hiện đại.",
+>>>>>>> d96b4668f0e0014fe25ab2ce51bc67ad3afdd3a7
     "specifications": {},
     "overallRating": 0.0,
     "reviewCount": 0,

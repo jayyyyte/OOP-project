@@ -25,7 +25,8 @@ public class CrawlerApp {
             List<Product> laptops = new ArrayList<>();
 
             for (Crawler crawler : crawlers) {
-                List<Product> products = crawler.crawl(30); // Crawl 2 products per site
+                List<Product> products = crawler.crawl(30); // numbers of products crawled per sites
+
                 for (Product product : products) {
                     if ("Smartphone".equals(product.getCategoryData().get("category"))) {
                         smartphones.add(product);
