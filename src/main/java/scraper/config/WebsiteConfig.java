@@ -9,6 +9,7 @@ public class WebsiteConfig {
     private final String image;
     private final String detailUrl;
     private final String description;
+    private final String specsButton;
     private final String specsTable;
     private final String specsRow;
     private final String specsLabel;
@@ -23,7 +24,7 @@ public class WebsiteConfig {
     private final String reviewDate;
 
     public WebsiteConfig(String url, String targetCategory, String productContainer, String name, String price,
-                         String image, String detailUrl, String description, String specsTable, String specsRow,
+                         String image, String detailUrl, String description,String specsButton, String specsTable, String specsRow,
                          String specsLabel, String specsValue, String altSpecsRow, String rating, String reviewCount,
                          String reviewContainer, String reviewAuthor, String reviewText, String reviewRating,
                          String reviewDate) {
@@ -35,6 +36,7 @@ public class WebsiteConfig {
         this.image = image;
         this.detailUrl = detailUrl;
         this.description = description;
+        this.specsButton = specsButton;
         this.specsTable = specsTable;
         this.specsRow = specsRow;
         this.specsLabel = specsLabel;
@@ -64,6 +66,7 @@ public class WebsiteConfig {
     public String getImage() { return image; }
     public String getDetailUrl() { return detailUrl; }
     public String getDescription() { return description; }
+    public String getSpecsButton() { return specsButton;}
     public String getSpecsTable() { return specsTable; }
     public String getSpecsRow() { return specsRow; }
     public String getSpecsLabel() { return specsLabel; }
