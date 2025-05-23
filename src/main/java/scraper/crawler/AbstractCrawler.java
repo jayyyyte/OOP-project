@@ -9,8 +9,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import scraper.config.WebsiteConfig;
 import scraper.factory.ProductFactory;
 import scraper.model.Product;
-import scraper.model.Review;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,8 +57,15 @@ public abstract class AbstractCrawler implements Crawler {
 
                     product.setName(safeGetText(container, config.getName()));
                     String detailUrl = safeGetAttribute(container, config.getDetailUrl(), "href");
-                    product.setProductUrl(detailUrl);
-                    detailUrls.add(detailUrl);
+                    if (detailUrl != null && !detailUrl.isEmpty()) {
+                        String resolvedUrl = resolveUrl(detailUrl);
+                        product.setProductUrl(resolvedUrl);
+                        detailUrls.add(resolvedUrl);
+                    } else {
+                        System.err.println("No detail URL found for product: " + product.getName());
+                        product.setProductUrl(null);
+                        detailUrls.add(null);
+                    }
 
                     try {
                         product.setPrice(Product.parsePrice(safeGetText(container, config.getPrice())));
@@ -82,10 +90,11 @@ public abstract class AbstractCrawler implements Crawler {
             }
 
             for (Product product : productList) {
-                if (product.getProductUrl() == null) continue;
+                String productUrl = product.getProductUrl();
+                if (productUrl == null || productUrl.isEmpty() || !productUrl.startsWith("http")) continue;
 
                 try {
-                    driver.get(product.getProductUrl());
+                    driver.get(productUrl);
                     Thread.sleep(1000);
 
                     // Description
@@ -224,6 +233,26 @@ public abstract class AbstractCrawler implements Crawler {
         return productList;
     }
 
+    protected String resolveUrl(String url) {
+        if (url == null || url.isEmpty()) {
+            System.err.println("Invalid URL input: " + url);
+            return null;
+        }
+        if (url.startsWith("http")) {
+            return url; // Already absolute
+        }
+        try {
+            URI baseUri = new URI(config.getUrl());
+            URI resolvedUri = baseUri.resolve(url);
+            String resolved = resolvedUri.toString();
+            System.out.println("Resolved URL: " + url + " -> " + resolved);
+            return resolved;
+        } catch (URISyntaxException e) {
+            System.err.println("Error resolving URL " + url + ": " + e.getMessage());
+            return null;
+        }
+    }
+
     protected String safeGetText(WebElement element, String selector) {
         try {
             return element.findElement(By.cssSelector(selector)).getText().trim();
@@ -242,7 +271,7 @@ public abstract class AbstractCrawler implements Crawler {
 
     protected String safeGetAttribute(WebElement element, String selector, String attribute) {
         try {
-            return element.findElement(By.cssSelector(selector)).getAttribute(attribute);
+            return element.findElement(By.cssSelector(selector)).getDomAttribute(attribute);
         } catch (Exception e) {
             return "";
         }

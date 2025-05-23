@@ -1,6 +1,5 @@
 package scraper.model;
 
-import java.util.List;
 import java.util.Map;
 
 public class Laptop extends AbstractProduct {

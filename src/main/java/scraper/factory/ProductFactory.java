@@ -1,7 +1,6 @@
 package scraper.factory;
 
 import scraper.model.AbstractProduct;
-import scraper.model.Smartphone;
 
 import java.util.Map;
 
