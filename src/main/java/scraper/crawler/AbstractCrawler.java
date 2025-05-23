@@ -248,10 +248,9 @@ public abstract class AbstractCrawler implements Crawler {
                         }
                     }
 
-                    // Update the product with the collected specifications
+                    // Update status with the collected specifications
                     if (specsFound) {
                         System.out.println("Successfully extracted " + specs.size() + " specifications for: " + product.getName());
-                        specs.forEach((k, v) -> System.out.println("  - " + k + ": " + v));
                     } else {
                         System.err.println("No specifications found for: " + product.getName());
                     }
