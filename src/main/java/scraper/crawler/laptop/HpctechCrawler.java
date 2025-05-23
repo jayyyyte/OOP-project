@@ -4,8 +4,8 @@ import scraper.config.WebsiteConfig;
 import scraper.crawler.AbstractCrawler;
 import scraper.factory.LaptopFactory;
 
-public class Laptop88Crawler extends AbstractCrawler {
-    public Laptop88Crawler(WebsiteConfig config) {
+public class HpctechCrawler extends AbstractCrawler {
+    public HpctechCrawler(WebsiteConfig config) {
         super(config, new LaptopFactory());
     }
 }

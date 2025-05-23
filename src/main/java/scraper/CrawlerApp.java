@@ -3,7 +3,7 @@ package scraper;
 import scraper.config.ConfigLoader;
 import scraper.crawler.Crawler;
 import scraper.crawler.laptop.CellphoneSLCrawler;
-import scraper.crawler.laptop.Laptop88Crawler;
+import scraper.crawler.laptop.HpctechCrawler;
 import scraper.crawler.smartphone.CellphoneSCrawler;
 import scraper.crawler.smartphone.HoangHaMobileCrawler;
 import scraper.model.Product;
@@ -19,7 +19,7 @@ public class CrawlerApp {
             crawlers.add(new CellphoneSCrawler(ConfigLoader.loadConfig("cellphones_smartphone.properties")));
             crawlers.add(new HoangHaMobileCrawler(ConfigLoader.loadConfig("hoanghamobile.properties")));
             crawlers.add(new CellphoneSLCrawler(ConfigLoader.loadConfig("cellphones_laptop.properties")));
-            crawlers.add(new Laptop88Crawler(ConfigLoader.loadConfig("laptop88.properties")));
+            crawlers.add(new HpctechCrawler(ConfigLoader.loadConfig("hpctech.properties")));
 
             List<Product> smartphones = new ArrayList<>();
             List<Product> laptops = new ArrayList<>();
