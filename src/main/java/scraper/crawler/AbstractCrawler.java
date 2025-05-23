@@ -119,27 +119,13 @@ public abstract class AbstractCrawler implements Crawler {
                     }
                     product.setDescription(description);
 
-                    // Specifications
+                    // SPECIFICATIONS
                     Map<String, String> specs = new HashMap<>();
                     boolean specsFound = false;
 
-                    try {
-                        List<WebElement> specTables = driver.findElements(By.cssSelector(config.getSpecsTable()));
-                        for (WebElement table : specTables) {
-                            List<WebElement> rows = table.findElements(By.cssSelector(config.getSpecsRow()));
-                            for (WebElement row : rows) {
-                                try {
-                                    String label = safeGetText(row, config.getSpecsLabel());
-                                    String value = safeGetText(row, config.getSpecsValue());
-                                    if (!label.isEmpty() && !value.isEmpty()) {
-                                        specs.put(label, value);
-                                        specsFound = true;
-                                    }
-                                } catch (Exception e) {}
-                            }
-                        }
-                    } catch (Exception e) {}
-
+                    // APPROACH 1: Try to click "Xem cấu hình chi tiết" button and extract from expanded section
+                    // APPROACH 2: Extract specifications from tables
+                    // APPROACH 3: Look for alternate specs format (non-table formats)
                     if (!specsFound) {
                         try {
                             List<WebElement> specRows = driver.findElements(By.cssSelector(config.getAltSpecsRow()));
@@ -156,27 +142,147 @@ public abstract class AbstractCrawler implements Crawler {
                         } catch (Exception e) {}
                     }
 
+                    // APPROACH 4: Try to find specs directly in the HTML
+                    if (!specsFound) {
+                        System.out.println("Previous approaches failed, trying direct HTML inspection...");
+                        try {
+                            // Get the page source
+                            String pageSource = driver.getPageSource();
+
+                            // Search for specification section HTML patterns
+                            Pattern specPattern = Pattern.compile("<td[^>]*>(.*?)</td>\\s*<td[^>]*>(.*?)</td>");
+                            Matcher matcher = specPattern.matcher(pageSource);
+
+                            while (matcher.find()) {
+                                String key = matcher.group(1).replaceAll("<[^>]*>", "").trim();
+                                String value = matcher.group(2).replaceAll("<[^>]*>", "").trim();
+
+                                if (!key.isEmpty() && !value.isEmpty()) {
+                                    specs.put(key, value);
+                                    specsFound = true;
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Error in direct HTML approach: " + e.getMessage());
+                        }
+                    }
+
+                    // APPROACH 5: Look for specification elements by their text content
+                    if (!specsFound) {
+                        System.out.println("Trying to find specs by text content...");
+                        try {
+                            // Look for common spec categories in Vietnamese phones
+                            String[] specCategories = {
+                                    "Màn hình", "CPU", "RAM", "Bộ nhớ trong", "Camera sau",
+                                    "Camera trước", "Pin", "Hệ điều hành", "Độ phân giải"
+                            };
+
+                            for (String category : specCategories) {
+                                try {
+                                    List<WebElement> elements = driver.findElements(
+                                            By.xpath("//*[contains(text(), '" + category + "')]"));
+
+                                    for (WebElement element : elements) {
+                                        String text = element.getText().trim();
+                                        if (text.contains(":")) {
+                                            String[] parts = text.split(":", 2);
+                                            if (parts.length == 2) {
+                                                specs.put(parts[0].trim(), parts[1].trim());
+                                                specsFound = true;
+                                            }
+                                        } else {
+                                            // Try to find the value in a nearby element
+                                            try {
+                                                WebElement parent = element.findElement(By.xpath("./.."));
+                                                WebElement valueElement = parent.findElement(
+                                                        By.xpath(".//td[2] | .//span[2] | .//div[2]"));
+
+                                                String value = valueElement.getText().trim();
+                                                if (!value.isEmpty()) {
+                                                    specs.put(category, value);
+                                                    specsFound = true;
+                                                }
+                                            } catch (Exception nearbyEx) {
+                                                // No nearby value element found
+                                            }
+                                        }
+                                    }
+                                } catch (Exception catEx) {
+                                    // Continue to next category
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Error in text content approach: " + e.getMessage());
+                        }
+                    }
+
+                    // APPROACH 6: Try to extract using JavaScript
+                    if (!specsFound) {
+                        System.out.println("Trying JavaScript approach...");
+                        try {
+                            // Try to extract specs data via JavaScript
+                            Object result = ((JavascriptExecutor) driver).executeScript(
+                                    "const specs = {}; " +
+                                            "document.querySelectorAll('table tr').forEach(row => { " +
+                                            "  const cells = row.querySelectorAll('td, th'); " +
+                                            "  if (cells.length >= 2) { " +
+                                            "    const key = cells[0].textContent.trim(); " +
+                                            "    const value = cells[1].textContent.trim(); " +
+                                            "    if (key && value) specs[key] = value; " +
+                                            "  } " +
+                                            "}); " +
+                                            "return specs;"
+                            );
+
+                            if (result instanceof Map) {
+                                @SuppressWarnings("unchecked")
+                                Map<String, String> jsSpecs = (Map<String, String>) result;
+                                specs.putAll(jsSpecs);
+                                if (!jsSpecs.isEmpty()) {
+                                    specsFound = true;
+                                    System.out.println("Found " + jsSpecs.size() + " specifications via JavaScript");
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Error in JavaScript approach: " + e.getMessage());
+                        }
+                    }
+
+                    // Update the product with the collected specifications
+                    if (specsFound) {
+                        System.out.println("Successfully extracted " + specs.size() + " specifications for: " + product.getName());
+                        specs.forEach((k, v) -> System.out.println("  - " + k + ": " + v));
+                    } else {
+                        System.err.println("No specifications found for: " + product.getName());
+                    }
+
                     product.setSpecifications(specs);
                     product.organizeSpecificationsIntoCategories();
 
-                    // Rating
+                    // RATING
+                    //Approach 3: Look for text containing rating information
                     double rating = 0.0;
-                    for (String selector : config.getRating().split(",")) {
+                    boolean ratingFound = false;
+                    if (!ratingFound) {
                         try {
-                            String ratingText = safeGetText(driver, selector.trim());
-                            if (ratingText.contains("/")) {
-                                ratingText = ratingText.split("/")[0].trim();
-                            }
-                            ratingText = ratingText.replaceAll("[^0-9.,]", "").replace(",", ".");
-                            if (!ratingText.isEmpty()) {
-                                rating = Double.parseDouble(ratingText);
-                                break;
-                            }
-                        } catch (Exception e) {}
-                    }
-                    product.setOverallRating(rating);
+                            // Get page source and search for rating patterns
+                            String pageSource = driver.getPageSource().toLowerCase();
+                            Pattern ratingPattern = Pattern.compile("([0-9],[0-9]|[0-9]\\.[0-9])/5");
+                            Matcher matcher = ratingPattern.matcher(pageSource);
 
-                    // Review Count
+                            if (matcher.find()) {
+                                String ratingStr = matcher.group(1).replace(",", ".");
+                                double rating1 = Double.parseDouble(ratingStr);
+                                product.setOverallRating(rating1);
+
+                                ratingFound = true;
+                            }
+                        } catch (Exception e) {
+
+                        }
+                    }
+
+                    // REVIEW COUNT
                     int reviewCount = 0;
                     for (String selector : config.getReviewCount().split(",")) {
                         try {

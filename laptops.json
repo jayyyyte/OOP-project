@@ -7,7 +7,7 @@
     "priceCurrency": "VND",
     "description": "Thiết kế gọn nhẹ chỉ 1.4kg cơ động sẵn sàng theo bạn đi khắp nơi\nCPU Intel Core i5-1235U giải quyết nhanh gọn mọi tác vụ văn phòng\nRAM 16GB kết hợp ổ cứng 512GB SSD cho hiệu suất nhanh chóng, lưu trữ thoải mái\nMàn hình 14 inch Full HD cùng tấm nền IPS cho khả năng hiển thị sắc nét",
     "specifications": {},
-    "overallRating": 0.0,
+    "overallRating": 5.0,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -22,7 +22,7 @@
     "priceCurrency": "VND",
     "description": "No description available",
     "specifications": {},
-    "overallRating": 0.0,
+    "overallRating": 5.0,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -52,7 +52,7 @@
     "priceCurrency": "VND",
     "description": "Trang bị CPU Intel Core i5-12500H và card đồ họa NVIDIA GeForce RTX 2050, laptop mang đến trải nghiệm gaming mượt mà trên các tựa game phổ biến.\nMàn hình 16 inch WUXGA (1920x1200) với tần số quét cao cho hình ảnh hiển thị sắc nét, chống xé hình, giật lag.\nRAM 16GB DDR4 đảm bảo khả năng chạy đa nhiệm hiệu quả, chuyển đổi giữa các ứng dụng nhanh chóng.\nỔ cứng SSD 512GB PCIe NVMe mang đến không gian lưu trữ rộng rãi và tốc độ truy xuất dữ liệu cực nhanh.\nThiết kế gaming ấn tượng với lớp vỏ màu đen mạnh mẽ cùng các đường nét thiết kế đậm chất gaming tạo nên diện mạo ấn tượng cho laptop.",
     "specifications": {},
-    "overallRating": 0.0,
+    "overallRating": 5.0,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -67,6 +67,21 @@
     "price": 15690.0,
     "priceCurrency": "VND",
     "description": "Sở hữu thiết kế thanh lịch và sang trọng với gam màu tinh tế\nMàn hình 14 inch Full HD, mang đến hình ảnh sắc nét và màu sắc sống động\nBộ xử lý Intel Core i5-1335U cho khả năng xử lý tác vụ đa nhiệm và các ứng dụng đòi hỏi hiệu suất cao một cách mượt mà\nRAM 16 GB đảm bảo khả năng xử lý mọi dữ liệu nhanh chóng và hiệu quả\nỔ cứng 512 GB SSD cung cấp không gian lưu trữ lớn, giúp bạn lưu trữ nhiều tài liệu và dữ liệu quan trọng",
+    "specifications": {},
+    "overallRating": 0.0,
+    "reviewCount": 0,
+    "categoryData": {
+      "reviews": [],
+      "category": "Laptop"
+    }
+  },
+  {
+    "name": "",
+    "productUrl": "https://cellphones.com.vn/laptop-lenovo-ideapad-slim-5-15arp10-83j3002svn.html",
+    "imageUrl": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/g/r/group_659_3__4.png",
+    "price": 0.0,
+    "priceCurrency": "VND",
+    "description": "Laptop sở hữu kiểu dáng mỏng nhẹ, thuận tiện cho việc di chuyển và sử dụng hàng ngày.\nMàn hình 15.1 inch WQXGA OLED 165Hz 100% SRGB mang lại hình ảnh sống động với độ phân giải cao, lý tưởng cho việc xem phim và làm việc.\nĐược trang bị bộ vi xử lý AMD Ryzen 7 7735HS, máy chạy mượt mà các ứng dụng nặng và đa nhiệm.\nVới 32GB RAM, laptop hỗ trợ tốt cho các tác vụ yêu cầu hiệu suất cao và khả năng đa nhiệm.\nỔ cứng 512GB PCIE cho tốc độ đọc/ghi nhanh chóng và không gian lưu trữ thoải mái cho dữ liệu và phần mềm.",
     "specifications": {},
     "overallRating": 0.0,
     "reviewCount": 0,
@@ -107,11 +122,11 @@
   },
   {
     "name": "",
-    "productUrl": "https://cellphones.com.vn/laptop-lenovo-ideapad-slim-5-15arp10-83j3002svn.html",
-    "imageUrl": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/g/r/group_659_3__4.png",
+    "productUrl": "https://cellphones.com.vn/laptop-lenovo-ideapad-slim-5-14akp10-83hx001kvn-ryzen-ai-5.html",
+    "imageUrl": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/t/e/text_ng_n_12__8_21.png",
     "price": 0.0,
     "priceCurrency": "VND",
-    "description": "Laptop sở hữu kiểu dáng mỏng nhẹ, thuận tiện cho việc di chuyển và sử dụng hàng ngày.\nMàn hình 15.1 inch WQXGA OLED 165Hz 100% SRGB mang lại hình ảnh sống động với độ phân giải cao, lý tưởng cho việc xem phim và làm việc.\nĐược trang bị bộ vi xử lý AMD Ryzen 7 7735HS, máy chạy mượt mà các ứng dụng nặng và đa nhiệm.\nVới 32GB RAM, laptop hỗ trợ tốt cho các tác vụ yêu cầu hiệu suất cao và khả năng đa nhiệm.\nỔ cứng 512GB PCIE cho tốc độ đọc/ghi nhanh chóng và không gian lưu trữ thoải mái cho dữ liệu và phần mềm.",
+    "description": "Được trang bị bộ vi xử lý Ryzen AI 5 340, kết hợp với RAM 24GB, giúp xử lý mượt mà các tác vụ đa nhiệm và công việc nặng.\nỔ cứng SSD 512GB PCIe mang đến tốc độ đọc/ghi nhanh chóng và không gian lưu trữ rộng rãi cho tài liệu và ứng dụng.\nMàn hình 14 inch với độ phân giải WUXGA sử dụng công nghệ OLED, cho hình ảnh siêu sắc nét, màu sắc rực rỡ và góc nhìn rộng.\nKiểu dáng gọn gàng, màu xám hiện đại, máy dễ dàng mang theo, phù hợp với người dùng di động.",
     "specifications": {},
     "overallRating": 0.0,
     "reviewCount": 0,
@@ -136,21 +151,6 @@
     }
   },
   {
-    "name": "",
-    "productUrl": "https://cellphones.com.vn/laptop-lenovo-ideapad-slim-5-14akp10-83hx001kvn-ryzen-ai-5.html",
-    "imageUrl": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/t/e/text_ng_n_12__8_21.png",
-    "price": 0.0,
-    "priceCurrency": "VND",
-    "description": "Được trang bị bộ vi xử lý Ryzen AI 5 340, kết hợp với RAM 24GB, giúp xử lý mượt mà các tác vụ đa nhiệm và công việc nặng.\nỔ cứng SSD 512GB PCIe mang đến tốc độ đọc/ghi nhanh chóng và không gian lưu trữ rộng rãi cho tài liệu và ứng dụng.\nMàn hình 14 inch với độ phân giải WUXGA sử dụng công nghệ OLED, cho hình ảnh siêu sắc nét, màu sắc rực rỡ và góc nhìn rộng.\nKiểu dáng gọn gàng, màu xám hiện đại, máy dễ dàng mang theo, phù hợp với người dùng di động.",
-    "specifications": {},
-    "overallRating": 0.0,
-    "reviewCount": 0,
-    "categoryData": {
-      "reviews": [],
-      "category": "Laptop"
-    }
-  },
-  {
     "name": "Apple MacBook Air M2 2024 8CPU 8GPU 16GB 256GB I Chính hãng Apple Việt Nam",
     "productUrl": "https://cellphones.com.vn/macbook-air-m2-2022-16gb.html",
     "imageUrl": "https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/m/image_1396_1.png",
@@ -158,7 +158,7 @@
     "priceCurrency": "VND",
     "description": "Thiết kế sang trọng, lịch lãm - siêu mỏng 11.3mm, chỉ 1.24kg\nHiệu năng hàng đầu - Chip Apple m2, 8 nhân GPU, hỗ trợ tốt các phần mềm như Word, Axel, Adoble Premier\nĐa nhiệm mượt mà - Ram 16GB, SSD 256GB cho phép vừa làm việc, vừa nghe nhạc\nMàn hình sắc nét - Độ phân giải 2560 x 1664 cùng độ sáng 500 nits\nÂm thanh sống động - 4 loa tramg bị công nghệ dolby atmos và âm thanh đa chiều",
     "specifications": {},
-    "overallRating": 0.0,
+    "overallRating": 4.9,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -173,12 +173,17 @@
     "price": 26490.0,
     "priceCurrency": "VND",
     "description": "MacBook Air 13 M4 2025 sở hữu thiết kế siêu mỏng nhẹ với màu sắc sang trọng, độ dày chỉ 1.13 cm và trọng lượng 1.24 kg.\nMáy được trang bị chip M4 thế hệ mới nhất của Apple với 10 CPU và 8 GPU, mang lại hiệu năng xử lý mạnh mẽ và khả năng đồ họa ấn tượng.\nRAM 16GB và ổ cứng SSD 256GB giúp đa nhiệm mượt mà, khởi động nhanh chóng và lưu trữ đủ dùng cho công việc hàng ngày.\nMàn hình Liquid Retina 13.6 inch với độ phân giải 2560x1664 pixels cho hình ảnh sắc nét, màu sắc chân thực và độ sáng cao lên đến 500 nits.",
-    "specifications": {},
-    "overallRating": 0.0,
+    "specifications": {
+      "R5-7235HS/12GB/512GB PCIE/VGA 6GB RTX3050/15.6 FHD CellphoneS thu lại loại 1, mình lên đời MacBook Air M4 13 inch 2025 10CPU 8GPU 16GB 256GB xanh dương tại HCM giá bù dự kiến": "16.990.000đ"
+    },
+    "overallRating": 5.0,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
       "category": "Laptop",
+      "techSpecs": {
+        "R5-7235HS/12GB/512GB PCIE/VGA 6GB RTX3050/15.6 FHD CellphoneS thu lại loại 1, mình lên đời MacBook Air M4 13 inch 2025 10CPU 8GPU 16GB 256GB xanh dương tại HCM giá bù dự kiến": "16.990.000đ"
+      },
       "brand": "Apple"
     }
   },
@@ -190,7 +195,7 @@
     "priceCurrency": "VND",
     "description": "Trải nghiệm hình ảnh sắc nét, mượt mà và sống động với tấm nền OLED 3.2K tần số quét 120Hz.\nChip AI Intel Core Ultra 7 đảm bảo hiệu năng xử lý mọi tác vụ mượt mà \u0026 nhanh chóng.\n16GB RAM và 512GB SSD cho khả năng xử lý đa nhiệm mượt mà, chơi game và làm việc đồ họa chuyên nghiệp.\nThiết kế mỏng nhẹ trong khung máy hoàn toàn bằng kim loại cho tính di động tuyệt đối.",
     "specifications": {},
-    "overallRating": 0.0,
+    "overallRating": 5.0,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -206,7 +211,7 @@
     "priceCurrency": "VND",
     "description": "Được trang bị chip Intel Core i5-12450H, laptop này mang lại hiệu suất mượt mà cho các tác vụ đa nhiệm và chơi game.\nVới RAM 16GB và ổ cứng SSD 512GB PCIe, người dùng có thể lưu trữ nhiều dữ liệu và mở nhiều ứng dụng cùng lúc mà không lo về tốc độ.\nMàn hình 15.6 inch FHD với tần số quét 144Hz cho trải nghiệm hình ảnh sắc nét và mượt mà, rất phù hợp cho game thủ.\nTrang bị card đồ họa RTX 2050 4GB, laptop hỗ trợ xử lý đồ họa tốt cho các trò chơi và ứng dụng thiết kế.",
     "specifications": {},
-    "overallRating": 0.0,
+    "overallRating": 5.0,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -221,7 +226,7 @@
     "priceCurrency": "VND",
     "description": "Chip M4 tích hợp mang đến hiệu năng vượt trội cho công việc sáng tạo và giải trí.\nHiệu suất đồ họa ấn tượng giúp xử lý đồ họa mượt mà, đáp ứng tốt nhu cầu chỉnh sửa video, thiết kế đồ họa và chơi game ở mức độ cao.\n16GB RAM cho phép đa nhiệm mượt mà, ổ cứng 256GB SSD cung cấp tốc độ truy xuất dữ liệu nhanh chóng.\nThiết kế nhỏ gọn, tinh tế phù hợp với bất kỳ không gian làm việc nào.",
     "specifications": {},
-    "overallRating": 0.0,
+    "overallRating": 5.0,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -237,7 +242,7 @@
     "priceCurrency": "VND",
     "description": "Trang bị chip Intel Core i5-12500H và card đồ họa NVIDIA GeForce RTX 3050 4GB, chiến mượt các tựa game Esports mức cài đặt đồ họa cao.\nMàn hình 16 inch WUXGA (1920x1200) với tần số quét 144Hz, cho trải nghiệm gaming mượt mà, hình ảnh sắc nét.\nVỏ máy màu đen kết hợp cùng các đường nét thiết kế gaming tạo nên vẻ ngoài năng động, cá tính.\nCông nghệ tản nhiệt ASUS giúp máy luôn mát mẻ, ổn định hiệu năng trong thời gian dài chơi game.\nCông nghệ âm thanh mang đến trải nghiệm âm thanh vòm sống động, tăng thêm phần hấp dẫn cho game thủ.",
     "specifications": {},
-    "overallRating": 0.0,
+    "overallRating": 5.0,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -267,12 +272,17 @@
     "price": 39590.0,
     "priceCurrency": "VND",
     "description": "Cung cấp hiệu năng mạnh mẽ với 10 nhân CPU và 10 nhân GPU, đáp ứng tốt nhu cầu công việc hàng ngày và các tác vụ sáng tạo cơ bản.\nRAM 16GB đủ dùng cho đa số người dùng, cho phép chạy nhiều ứng dụng cùng lúc mà không gặp quá nhiều vấn đề về hiệu năng.\nỔ cứng SSD 512GB tốc độ cao, giúp khởi động máy và mở ứng dụng nhanh chóng.\nMàn hình Liquid Retina XDR 14.2 inch sắc nét với công nghệ ProMotion, mang lại trải nghiệm hình ảnh mượt mà và sống động.",
-    "specifications": {},
-    "overallRating": 0.0,
+    "specifications": {
+      "Dạ APPLE MACMINI M2 8 CPU - 10 GPU 8GB 256GB 2023 (MMFJ3) Loại 1": "Máy hoạt động bình thường, màn đẹp, thân máy đẹp. Giá thu lại dự kiến: 5.250.000đ - Em gửi Giá tham khảo ,mình mang máy đến cửa hàng để thẩm định dựa trên tình hình thực tế sản phẩm nhé!"
+    },
+    "overallRating": 5.0,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
       "category": "Laptop",
+      "techSpecs": {
+        "Dạ APPLE MACMINI M2 8 CPU - 10 GPU 8GB 256GB 2023 (MMFJ3) Loại 1": "Máy hoạt động bình thường, màn đẹp, thân máy đẹp. Giá thu lại dự kiến: 5.250.000đ - Em gửi Giá tham khảo ,mình mang máy đến cửa hàng để thẩm định dựa trên tình hình thực tế sản phẩm nhé!"
+      },
       "brand": "Apple"
     }
   },
@@ -284,7 +294,7 @@
     "priceCurrency": "VND",
     "description": "MacBook Air 13 M4 2025 sở hữu thiết kế siêu mỏng nhẹ với màu sắc sang trọng, độ dày chỉ 1.13 cm và trọng lượng 1.24 kg.\nMáy được trang bị chip M4 thế hệ mới nhất của Apple với 10 CPU và 10 GPU, mang lại hiệu năng xử lý mạnh mẽ và khả năng đồ họa ấn tượng.\nRAM 16GB và ổ cứng SSD 512GB giúp đa nhiệm mượt mà, khởi động nhanh chóng và lưu trữ đủ dùng cho công việc hàng ngày.\nMàn hình Liquid Retina 13.6 inch với độ phân giải 2560x1664 pixels cho hình ảnh sắc nét, màu sắc chân thực và độ sáng cao lên đến 500 nits.",
     "specifications": {},
-    "overallRating": 0.0,
+    "overallRating": 5.0,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -300,7 +310,7 @@
     "priceCurrency": "VND",
     "description": "CPU Intel Core i5-12450H dễ dàng xử lý mọi tác vụ làm việc học tập, làm việc thường ngày.\nRAM 16GB DDR4 cùng ổ cứng dung lượng 512GB PCIe NVMe SSD có tốc độ đọc ghi siêu cao, thời gian mở máy, truy cập tệp, copy tệp,... nhanh chóng.\nMàn hình 15.6 inch Full HD cho không gian trải nghiệm nội dung tương đối rộng rãi, màu sắc rõ nét.\nCông nghệ Acer ComfyView bảo vệ đôi mắt của bạn khỏi những tác động tiêu cực từ ánh sáng màn hình.",
     "specifications": {},
-    "overallRating": 0.0,
+    "overallRating": 4.5,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -315,7 +325,7 @@
     "priceCurrency": "VND",
     "description": "Màn hình 15.6 inch Full HD cho không gian hiển thị tương đối rộng và rõ nét, màu sắc sống động\nCPU Intel Core i5 12450H cùng card RTX 3050 cân mọi tác vụ văn phòng, thoả sức chiến các tựa game yêu thích\nRAM 16 GB hỗ trợ nâng cấp tối đa 32 GB thoải mái thao tác với nhiều tabs Chrome mà không lo lag, giật\nỔ cứng SSD 512 GB rộng rãi giúp lưu trữ nhiều tệp tin, tài liệu nhanh chóng\nTần số quét 144 Hz giúp khung hình chuyển động trơn tru, hỗ trợ game thủ phản ứng nhanh chóng",
     "specifications": {},
-    "overallRating": 0.0,
+    "overallRating": 4.9,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -360,7 +370,7 @@
     "priceCurrency": "VND",
     "description": "Thiết kế gọn nhẹ chỉ 1.4kg cơ động sẵn sàng theo bạn đi khắp nơi\nCPU Intel Core i5-1235U giải quyết nhanh gọn mọi tác vụ văn phòng\nRAM 16GB kết hợp ổ cứng 512GB SSD cho hiệu suất nhanh chóng, lưu trữ thoải mái\nMàn hình 14 inch Full HD cùng tấm nền IPS cho khả năng hiển thị sắc nét",
     "specifications": {},
-    "overallRating": 0.0,
+    "overallRating": 5.0,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -390,7 +400,7 @@
     "priceCurrency": "VND",
     "description": "Trang bị bộ vi xử lý Intel Core i5-12450HX cân mọi tác vụ từ văn phòng cho đến chơi game.\nCard đồ họa RTX 4050 hỗ trợ chỉnh sửa ảnh, video 3D, chơi game mượt mà.\nRAM 16GB DDR5-4800 SO-DIMM cùng ổ cứng 512GB SSD cho không gian lưu trữ rộng rãi, hỗ trợ mở ứng dụng, tài liệu nhanh chóng.\nMàn hình 15.6 inch FHD cùng tần số quét 144Hz cho bạn thoải mái chơi game, bắt kịp mọi thao tác của đối thủ.",
     "specifications": {},
-    "overallRating": 0.0,
+    "overallRating": 4.9,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -404,12 +414,17 @@
     "price": 27490.0,
     "priceCurrency": "VND",
     "description": "MacBook Air 13 M4 2025 sở hữu thiết kế siêu mỏng nhẹ với màu sắc sang trọng, độ dày chỉ 1.13 cm và trọng lượng 1.24 kg.\nMáy được trang bị chip M4 thế hệ mới nhất của Apple với 10 CPU và 8 GPU, mang lại hiệu năng xử lý mạnh mẽ và khả năng đồ họa ấn tượng.\nRAM 16GB và ổ cứng SSD 256GB giúp đa nhiệm mượt mà, khởi động nhanh chóng và lưu trữ đủ dùng cho công việc hàng ngày.\nMàn hình Liquid Retina 13.6 inch với độ phân giải 2560x1664 pixels cho hình ảnh sắc nét, màu sắc chân thực và độ sáng cao lên đến 500 nits.",
-    "specifications": {},
+    "specifications": {
+      "CPU": "Đánh giá \u0026 nhận xét\nGỬI ĐÁNH GIÁ"
+    },
     "overallRating": 0.0,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
       "category": "Laptop",
+      "techSpecs": {
+        "CPU": "Đánh giá \u0026 nhận xét\nGỬI ĐÁNH GIÁ"
+      },
       "brand": "Apple"
     }
   },
@@ -421,7 +436,7 @@
     "priceCurrency": "VND",
     "description": "Trang bị bộ vi xử lý AMD Ryzen 7 7435HS, mang lại hiệu suất cao cho các tác vụ đa nhiệm và gaming.\nVới GPU NVIDIA RTX 3050 4GB, laptop có khả năng xử lý đồ họa mượt mà, lý tưởng cho game thủ và thiết kế đồ họa.\nMàn hình 15.6 inch Full HD với tần số quét 144Hz giúp hiển thị hình ảnh mượt mà và sống động trong các trò chơi.\n16GB RAM cho phép xử lý nhiều ứng dụng cùng lúc mà không gặp khó khăn, tăng cường trải nghiệm người dùng.\n512GB PCIe SSD cung cấp không gian lưu trữ rộng rãi và tốc độ truy xuất dữ liệu nhanh, giúp khởi động máy và ứng dụng nhanh chóng.",
     "specifications": {},
-    "overallRating": 0.0,
+    "overallRating": 5.0,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -436,7 +451,7 @@
     "priceCurrency": "VND",
     "description": "Trang bị bộ vi xử lý Intel Core i5-13500H cung cấp hiệu suất xử lý đa nhiệm mạnh mẽ mọi tác vụ học tập, văn phòng\nMàn hình 14.0 inch 2.8K OLED mang lại độ sắc nét cao, độ tương phản tuyệt vời và màu sắc sống động, tạo ra trải nghiệm hình ảnh đỉnh cao cho người dùng\n16GB RAM giúp xử lý tác vụ nhanh chóng và mượt mà cùng ổ cứng SSD PCIe dung lượng lớn 512GB, giúp lưu trữ dữ liệu một cách nhanh chóng và an toàn\nTrang bị các tính năng tiện ích như webcam, Wifi, Bluetooth, cổng kết nối đa dạng để phục vụ nhu cầu làm việc và giải trí hàng ngày của người dùng",
     "specifications": {},
-    "overallRating": 0.0,
+    "overallRating": 4.7,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
@@ -451,12 +466,17 @@
     "price": 13990.0,
     "priceCurrency": "VND",
     "description": "Trang bị vi xử lý Intel Core i5-1235U, cùng với card đồ họa tích hợp Intel Iris Xe Graphics, mang lại hiệu suất mạnh mẽ cho mọi nhu cầu từ công việc đến giải trí\nMàn hình FHD 15.6 inch với độ sáng 250 nits và độ phủ màu 45% NTSC, mang lại hình ảnh sắc nét và sống động\nCông nghệ âm thanh SonicMaster, cùng với loa tích hợp và micrô mảng, tạo ra trải nghiệm âm thanh vượt trội\nBảo mật với cảm biến vân tay tích hợp vào touchpad hỗ trợ mở máy chỉ với một chạm\nPin 42WHrs cho thời lượng sử dụng lâu dài, không bị gián đoạn trong công việc hoặc giải trí",
-    "specifications": {},
-    "overallRating": 0.0,
+    "specifications": {
+      "Laptop Asus Vivobook 15 X1504ZA-NJ517W được trang bị bộ vi xử lý Intel Core i5-1235U cùng card đồ họa Intel Xe Graphics hạn chế độ trễ của khung hình. Sản phẩm sử dụng RAM 16GB DDR4 với ổ cứng SSD M.2 NVMe PCIe 3.0 dung lượng 512GB cung cấp kho lưu trữ lớn. Màn hình FHD 15.6 inch theo chuẩn tỉ lệ 16": "9 tích hợp công nghệ màn hình Anti-Glare chống lóa. Thiết kế máy mỏng gọn với bản lề xoay 180 độ linh hoạt, dễ điều chỉnh."
+    },
+    "overallRating": 4.8,
     "reviewCount": 0,
     "categoryData": {
       "reviews": [],
       "category": "Laptop",
+      "techSpecs": {
+        "Laptop Asus Vivobook 15 X1504ZA-NJ517W được trang bị bộ vi xử lý Intel Core i5-1235U cùng card đồ họa Intel Xe Graphics hạn chế độ trễ của khung hình. Sản phẩm sử dụng RAM 16GB DDR4 với ổ cứng SSD M.2 NVMe PCIe 3.0 dung lượng 512GB cung cấp kho lưu trữ lớn. Màn hình FHD 15.6 inch theo chuẩn tỉ lệ 16": "9 tích hợp công nghệ màn hình Anti-Glare chống lóa. Thiết kế máy mỏng gọn với bản lề xoay 180 độ linh hoạt, dễ điều chỉnh."
+      },
       "brand": "Vivo"
     }
   },

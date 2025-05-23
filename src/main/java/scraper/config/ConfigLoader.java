@@ -25,6 +25,7 @@ public class ConfigLoader {
                 props.getProperty("image"),
                 props.getProperty("detailUrl"),
                 props.getProperty("description"),
+                props.getProperty("specsButton"),
                 props.getProperty("specsTable"),
                 props.getProperty("specsRow"),
                 props.getProperty("specsLabel"),
