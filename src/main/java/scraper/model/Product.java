@@ -36,7 +36,7 @@ public class Product {
     public void setSpecifications(Map<String, String> specifications) { this.specifications = specifications; }
     public double getOverallRating() { return overallRating; }
     public void setOverallRating(double overallRating) { this.overallRating = overallRating; }
-    public int getReviewCount() { return reviewCount; }
+    public int getReviewCount() { return reviewCount; } 
     public void setReviewCount(int reviewCount) { this.reviewCount = reviewCount; }
     public Map<String, Object> getCategoryData() { return categoryData; }
     public void setCategoryData(Map<String, Object> categoryData) { this.categoryData = categoryData; }

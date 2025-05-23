@@ -20,6 +20,7 @@ public class CrawlerApp {
             crawlers.add(new HoangHaMobileCrawler(ConfigLoader.loadConfig("hoanghamobile.properties")));
             crawlers.add(new CellphoneSLCrawler(ConfigLoader.loadConfig("cellphones_laptop.properties")));
             crawlers.add(new Laptop88Crawler(ConfigLoader.loadConfig("laptop88.properties")));
+            
 
             List<Product> smartphones = new ArrayList<>();
             List<Product> laptops = new ArrayList<>();
