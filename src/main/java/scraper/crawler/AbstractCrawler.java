@@ -390,8 +390,7 @@ public abstract class AbstractCrawler implements Crawler {
                     product.organizeSpecificationsIntoCategories();
 
                     // RATING
-                    //Approach 3: Look for text containing rating information
-                    double rating = 0.0;
+
                     boolean ratingFound = false;
 
                     // Approach 1: Direct rating display like "4.0/5"
@@ -483,59 +482,404 @@ public abstract class AbstractCrawler implements Crawler {
              
                         }
                     }
+// REVIEWS COUNT
+                    boolean reviewCountFound = false;
 
-                    // REVIEW COUNT
-                    int reviewCount = 0;
-                    for (String selector : config.getReviewCount().split(",")) {
-                        try {
-                            String countText = safeGetText(driver, selector.trim());
-                            Pattern pattern = Pattern.compile("\\d+");
-                            Matcher matcher = pattern.matcher(countText);
-                            if (matcher.find()) {
-                                reviewCount = Integer.parseInt(matcher.group());
-                                break;
+                    // Approach 1: Try direct selectors
+                    try {
+                        for (String selector : config.getReviewCount().split(",")) {
+                            try {
+                                WebElement reviewCountElement = driver.findElement(By.cssSelector(selector.trim()));
+                                String reviewCountText = reviewCountElement.getText().trim();
+                                System.out.println("Found review count text: " + reviewCountText);
+
+                                // Extract numbers only
+                                Pattern pattern = Pattern.compile("\\d+");
+                                Matcher matcher = pattern.matcher(reviewCountText);
+                                if (matcher.find()) {
+                                    int reviewCount = Integer.parseInt(matcher.group());
+                                    product.setReviewCount(reviewCount);
+                                    System.out.println("Successfully parsed review count: " + reviewCount);
+                                    reviewCountFound = true;
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                // Continue to next selector
                             }
-                        } catch (Exception e) {}
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Error in approach 1 for review count: " + e.getMessage());
                     }
 
-                    // Reviews
-                    List<Map<String, String>> reviews = new ArrayList<>();
-                    if (reviewCount > 0) {
+                    // Approach 2: Look for review links with counts
+                    if (!reviewCountFound) {
                         try {
-                            List<WebElement> reviewItems = driver.findElements(By.cssSelector(config.getReviewContainer()));
-                            for (WebElement item : reviewItems.subList(0, Math.min(reviewItems.size(), 10))) {
-                                Map<String, String> review = new HashMap<>();
+                            String[] reviewLinkSelectors = {
+                                "a:contains(đánh giá), a:contains(nhận xét), a:contains(review)",
+                                "div.rating-overview + a",
+                                "a.rating-link"
+                            };
+
+                            for (String xpathSelector : reviewLinkSelectors) {
                                 try {
-                                    String author = safeGetText(item, config.getReviewAuthor());
-                                    review.put("author", author.isEmpty() ? "Anonymous" : author);
+                                    List<WebElement> elements = driver.findElements(By.xpath(
+                                        "//a[contains(text(),'đánh giá') or contains(text(),'nhận xét') or contains(text(),'review')]"));
 
-                                    String content = safeGetText(item, config.getReviewText());
-                                    review.put("content", content);
+                                    for (WebElement element : elements) {
+                                        String text = element.getText().trim();
+                                        Pattern pattern = Pattern.compile("\\d+");
+                                        Matcher matcher = pattern.matcher(text);
+                                        if (matcher.find()) {
+                                            int reviewCount = Integer.parseInt(matcher.group());
+                                            product.setReviewCount(reviewCount);
+                                            System.out.println("Found review count via links: " + reviewCount);
+                                            reviewCountFound = true;
+                                            break;
+                                        }
+                                    }
 
-                                    String ratingText = safeGetAttribute(item, config.getReviewRating(), "data-rating");
-                                    review.put("rating", ratingText.isEmpty() ? "0" : ratingText);
+                                    if (reviewCountFound) break;
 
-                                    String date = safeGetText(item, config.getReviewDate());
-                                    review.put("date", date);
-
-                                    String verified = item.getText().contains("Đã mua tại") ? "true" : "false";
-                                    review.put("verified_purchase", verified);
-
-                                    reviews.add(review);
-                                } catch (Exception e) {}
+                                } catch (Exception e) {
+                                    // Try next selector
+                                }
                             }
-                        } catch (Exception e) {}
+                        } catch (Exception e) {
+                            System.err.println("Error in approach 2 for review count: " + e.getMessage());
+                        }
                     }
-                    product.setReviewCount(reviews.size());
-                    product.addCategoryData("reviews", reviews);
 
+                    // Approach 3: Count actual review items
+                    if (!reviewCountFound) {
+                        try {
+                            for (String selector : config.getReviewContainer().split(",")) {
+                                try {
+                                    WebElement reviewSection = driver.findElement(By.cssSelector(selector.trim()));
+                                    String REVIEW_ITEM_SELECTOR = "div.comment-item, div.item-comment";
+                                    List<WebElement> reviewItems = reviewSection.findElements(By.cssSelector(REVIEW_ITEM_SELECTOR.split(",")[0]));
+                                    if (!reviewItems.isEmpty()) {
+                                        product.setReviewCount(reviewItems.size());
+                                        System.out.println("Found review count by counting items: " + reviewItems.size());
+                                        reviewCountFound = true;
+                                        break;
+                                    }
+                                } catch (Exception e) {
+                                    // Try next selector
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Error in approach 3 for review count: " + e.getMessage());
+                        }
+                    }
+
+                    // Approach 4: Check page source for review count patterns
+                    if (!reviewCountFound) {
+                        try {
+                            String pageSource = driver.getPageSource();
+                            Pattern pattern = Pattern.compile("(\\d+)\\s+đánh giá");
+                            Matcher matcher = pattern.matcher(pageSource);
+                            if (matcher.find()) {
+                                int reviewCount = Integer.parseInt(matcher.group(1));
+                                product.setReviewCount(reviewCount);
+                                System.out.println("Found review count via regex: " + reviewCount);
+                                reviewCountFound = true;
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Error in approach 4 for review count: " + e.getMessage());
+                        }
+                    }
+
+                    if (!reviewCountFound) {
+                        // Look at the blue link text in your screenshot that says "1 đánh giá"
+                        try {
+                            WebElement ratingLink = driver.findElement(By.cssSelector("a.text-primary, a.blue-text"));
+                            String linkText = ratingLink.getText().trim();
+                            Pattern pattern = Pattern.compile("(\\d+)");
+                            Matcher matcher = pattern.matcher(linkText);
+                            if (matcher.find()) {
+                                int reviewCount = Integer.parseInt(matcher.group(1));
+                                product.setReviewCount(reviewCount);
+                                System.out.println("Found review count via blue link: " + reviewCount);
+                                reviewCountFound = true;
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Error in final approach for review count: " + e.getMessage());
+                        }
+                    }
+
+                    if (!reviewCountFound) {
+                        System.err.println("Could not find review count for: " + product.getName());
+                        product.setReviewCount(0);
+                    }
+
+                    // Collect actual reviews if needed (optional feature)
+                    if (product.getReviewCount() > 0) {
+                    	List<Map<String, String>> reviews = new ArrayList<>();
+                    	try {
+                    	    System.out.println("Looking for reviews...");
+
+                    	    // Find review items directly - based on the example image format
+                    	    List<WebElement> reviewItems = new ArrayList<>();
+
+                    	    // Try multiple possible selectors for review containers
+                    	    String[] reviewContainerSelectors = {
+                    	        "div.comment-list",
+                    	        "div.list-comment",
+                    	        "div.review-list",
+                    	        "div.ratings-reviews"
+                    	    };
+
+                    	    WebElement reviewContainer = null;
+                    	    for (String selector : reviewContainerSelectors) {
+                    	        try {
+                    	            List<WebElement> containers = driver.findElements(By.cssSelector(selector));
+                    	            if (!containers.isEmpty()) {
+                    	                reviewContainer = containers.get(0);
+                    	                System.out.println("Found review container using: " + selector);
+                    	                break;
+                    	            }
+                    	        } catch (Exception ex) {
+                    	            // Try next selector
+                    	        }
+                    	    }
+
+                    	    // If container found, look for review items within it
+                    	    if (reviewContainer != null) {
+                    	        // Try various selectors for individual review items
+                    	        String[] reviewItemSelectors = {
+                    	            "div.comment-item",
+                    	            "div.item-comment",
+                    	            "div.review-item",
+                    	            "> div" // Direct children
+                    	        };
+
+                    	        for (String selector : reviewItemSelectors) {
+                    	            try {
+                    	                List<WebElement> items = reviewContainer.findElements(By.cssSelector(selector));
+                    	                if (!items.isEmpty()) {
+                    	                    reviewItems = items;
+                    	                    System.out.println("Found " + items.size() + " review items using: " + selector);
+                    	                    break;
+                    	                }
+                    	            } catch (Exception ex) {
+                    	                // Try next selector
+                    	            }
+                    	        }
+                    	    } else {
+                    	        // If no container found, try direct page search
+                    	        System.out.println("No review container found, trying direct search...");
+                    	        try {
+                    	            reviewItems = driver.findElements(By.cssSelector("div[class*='comment-item'], div[class*='review-item']"));
+                    	            if (reviewItems.isEmpty()) {
+                    	                // Look for elements with user avatars/initials (as seen in the image)
+                    	                reviewItems = driver.findElements(By.cssSelector("div:has(> div.avatar), div:has(> span.initial)"));
+                    	            }
+                    	        } catch (Exception ex) {
+                    	            System.err.println("Error in direct review search: " + ex.getMessage());
+                    	        }
+                    	    }
+
+                    	    System.out.println("Found " + reviewItems.size() + " potential review items");
+
+                    	    // Process each review item (limit to 10 for efficiency)
+                    	    int reviewsToProcess = Math.min(reviewItems.size(), 10);
+                    	    for (int i = 0; i < reviewsToProcess; i++) {
+                    	        WebElement reviewItem = reviewItems.get(i);
+                    	        Map<String, String> review = new HashMap<>();
+
+                    	        // Extract author name - look for strong element first (as in the example)
+                    	        try {
+                    	            WebElement authorElement = reviewItem.findElement(By.cssSelector("strong"));
+                    	            String authorName = authorElement.getText().trim();
+                    	            if (!authorName.isEmpty()) {
+                    	                review.put("author", authorName);
+                    	                System.out.println("Found reviewer name: " + authorName);
+                    	            } else {
+                    	                review.put("author", "Anonymous");
+                    	            }
+                    	        } catch (Exception e) {
+                    	            // Try other author selectors
+                    	            try {
+                    	                List<WebElement> possibleNameElements = reviewItem.findElements(
+                    	                    By.cssSelector("div.user-name, div.comment-user-name, h4, h5"));
+
+                    	                for (WebElement element : possibleNameElements) {
+                    	                    String text = element.getText().trim();
+                    	                    if (!text.isEmpty() && text.length() < 50) { // Reasonable name length
+                    	                        review.put("author", text);
+                    	                        break;
+                    	                    }
+                    	                }
+
+                    	                if (!review.containsKey("author")) {
+                    	                    review.put("author", "Anonymous");
+                    	                }
+                    	            } catch (Exception e2) {
+                    	                review.put("author", "Anonymous");
+                    	            }
+                    	        }
+
+                    	        // Extract rating - look for star elements as in the example
+                    	        try {
+                    	            // Count filled stars (★) or look for rating text
+                    	            List<WebElement> starElements = reviewItem.findElements(
+                    	                By.cssSelector("i.fa-star, span.fa, i.fas"));
+
+                    	            if (!starElements.isEmpty()) {
+                    	                int filledStars = 0;
+                    	                for (WebElement star : starElements) {
+                    	                    String classes = star.getDomAttribute("class");
+                    	                    if (classes.contains("fa-solid") || classes.contains("fas") ||
+                    	                        classes.contains("active") || classes.contains("checked") ||
+                    	                        !classes.contains("fa-star-o")) {
+                    	                        filledStars++;
+                    	                    }
+                    	                }
+                    	                if (filledStars > 0) {
+                    	                    review.put("rating", String.valueOf(filledStars));
+                    	                }
+                    	            } else {
+                    	                // Try to find rating in text
+                    	                String fullText = reviewItem.getText();
+                    	                Pattern starPattern = Pattern.compile("([1-5]) sao|([1-5])/5|\\★{1,5}");
+                    	                Matcher starMatcher = starPattern.matcher(fullText);
+                    	                if (starMatcher.find()) {
+                    	                    String match = starMatcher.group(0);
+                    	                    if (match.contains("★")) {
+                    	                        review.put("rating", String.valueOf(match.length()));
+                    	                    } else if (match.contains("/")) {
+                    	                        review.put("rating", match.substring(0, 1));
+                    	                    } else if (match.contains("sao")) {
+                    	                        review.put("rating", match.substring(0, 1));
+                    	                    }
+                    	                }
+                    	            }
+                    	        } catch (Exception e) {
+                    	            // Rating is optional
+                    	        }
+
+                    	        // Extract date - format in example is DD/MM/YYYY
+                    	        try {
+                    	            // Look for date format text
+                    	            String fullText = reviewItem.getText();
+                    	            Pattern datePattern = Pattern.compile("\\d{1,2}/\\d{1,2}/\\d{4}");
+                    	            Matcher dateMatcher = datePattern.matcher(fullText);
+                    	            if (dateMatcher.find()) {
+                    	                review.put("date", dateMatcher.group(0));
+                    	            } else {
+                    	                // Try specific selectors
+                    	                WebElement dateElement = reviewItem.findElement(
+                    	                    By.cssSelector("div.comment-time, div.review-date, span.date"));
+                    	                review.put("date", dateElement.getText().trim());
+                    	            }
+                    	        } catch (Exception e) {
+                    	            // Date is optional
+                    	        }
+
+                    	        // Extract review content
+                    	        try {
+                    	            WebElement contentElement = reviewItem.findElement(
+                    	                By.cssSelector("div.comment-content, div.review-text, p.review-content"));
+                    	            String content = contentElement.getText().trim();
+                    	            if (!content.isEmpty()) {
+                    	                review.put("content", content);
+                    	            }
+                    	        } catch (Exception e) {
+                    	            // If specific content element not found, extract text excluding author/date
+                    	            try {
+                    	                String fullText = reviewItem.getText();
+
+                    	                // Remove author and date from text
+                    	                if (review.containsKey("author")) {
+                    	                    fullText = fullText.replace(review.get("author"), "");
+                    	                }
+                    	                if (review.containsKey("date")) {
+                    	                    fullText = fullText.replace(review.get("date"), "");
+                    	                }
+
+                    	                // Remove common UI elements text
+                    	                fullText = fullText.replaceAll("Đã mua tại CellphoneS", "");
+                    	                fullText = fullText.replaceAll("\\d{1,2}/\\d{1,2}/\\d{4}", "");
+                    	                fullText = fullText.replaceAll("\\★{1,5}", "");
+                    	                fullText = fullText.replaceAll("\\d sao", "");
+
+                    	                // Clean and trim result
+                    	                fullText = fullText.trim();
+                    	                if (!fullText.isEmpty()) {
+                    	                    review.put("content", fullText);
+                    	                }
+                    	            } catch (Exception e2) {
+                    	                // Content is important, but might be missing
+                    	                review.put("content", "");
+                    	            }
+                    	        }
+
+                    	        // Look for verification badges as in the example ("Đã mua tại CellphoneS")
+                    	        try {
+                    	            List<WebElement> badges = reviewItem.findElements(
+                    	                By.cssSelector("div.badge, span.badge, div.verified-badge"));
+
+                    	            if (!badges.isEmpty()) {
+                    	                for (WebElement badge : badges) {
+                    	                    String badgeText = badge.getText().trim();
+                    	                    if (badgeText.contains("mua tại") || badgeText.contains("verified")) {
+                    	                        review.put("verified_purchase", "true");
+                    	                        review.put("purchase_location", badgeText);
+                    	                        break;
+                    	                    }
+                    	                }
+                    	            } else {
+                    	                // Try to find verification text directly in the review
+                    	                String reviewText = reviewItem.getText();
+                    	                if (reviewText.contains("Đã mua tại")) {
+                    	                    review.put("verified_purchase", "true");
+                    	                }
+                    	            }
+                    	        } catch (Exception e) {
+                    	            // Verification badge is optional
+                    	        }
+
+                    	        // Add the review if we have at least author or content
+                    	        if (review.containsKey("author") || review.containsKey("content")) {
+                    	            reviews.add(review);
+                    	            System.out.println("Added review from: " + review.getOrDefault("author", "Anonymous"));
+                    	        }
+                    	    }
+
+                    	    // Update review count and add reviews to product
+                    	    if (!reviews.isEmpty()) {
+                    	        if (product.getReviewCount() < reviews.size()) {
+                    	            product.setReviewCount(reviews.size());
+                    	        }
+                    	        product.addCategoryData("reviews", reviews);
+                    	        System.out.println("Added " + reviews.size() + " reviews to product");
+                    	    }
+
+                    	} catch (Exception e) {
+                    	    System.err.println("Error extracting reviews: " + e.getMessage());
+                    	}
+                    }
+
+                    System.out.println("Finished scraping details for: " + product.getName());
+                    System.out.println("  Rating: " + product.getOverallRating() + ", Reviews: " + product.getReviewCount());
+
+                    // Ethical scraping: Add a delay between detail page loads
                     Thread.sleep(500);
+
+                } catch (TimeoutException e) {
+                    System.err.println("Timeout waiting for elements on detail page: " + product.getProductUrl());
+                } catch (NoSuchElementException e) {
+                    System.err.println("Element not found on detail page: " + product.getProductUrl());
                 } catch (Exception e) {
-                    System.err.println("Error on detail page " + product.getProductUrl() + ": " + e.getMessage());
+                    System.err.println("Error processing detail page " + product.getProductUrl() + ": " + e.getMessage());
                 }
             }
+
+        } catch (TimeoutException e) {
+            System.err.println("Timeout waiting for initial product containers. Page might not have loaded correctly or selector is wrong.");
         } catch (Exception e) {
-            System.err.println("Error crawling " + config.getUrl() + ": " + e.getMessage());
+            System.err.println("An unexpected error occurred during scraping: " + e.getMessage());
+            e.printStackTrace();
         }
 
         return productList;

@@ -21,6 +21,7 @@ public class CrawlerApp {
             crawlers.add(new CellphoneSLCrawler(ConfigLoader.loadConfig("cellphones_laptop.properties")));
             crawlers.add(new HpctechCrawler(ConfigLoader.loadConfig("hpctech.properties")));
 
+
             List<Product> smartphones = new ArrayList<>();
             List<Product> laptops = new ArrayList<>();
 
