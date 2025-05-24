@@ -25,6 +25,7 @@ import javax.json.JsonReader;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import util.ImageCache;
 
 public class HomePage {
     private Scene scene;
@@ -437,6 +438,8 @@ public class HomePage {
 
     private List<Product> loadProducts() {
         List<Product> products = new ArrayList<>();
+        List<String> imageUrls = new ArrayList<>();
+        
         try (InputStream is = getClass().getResourceAsStream("/products.json");
              JsonReader reader = Json.createReader(is)) {
 
@@ -451,9 +454,19 @@ public class HomePage {
                 product.overallRating = jsonObject.getJsonNumber("overallRating").doubleValue();
                 product.reviewCount = jsonObject.getInt("reviewCount", 0);
                 products.add(product);
+                
+                // Debug log
+                System.out.println("Found product image URL: " + product.imageUrl);
+                imageUrls.add(product.imageUrl);
             }
+            
+            // Preload all images
+            System.out.println("Preloading " + imageUrls.size() + " images...");
+            ImageCache.preloadImages(imageUrls);
+            
         } catch (Exception e) {
             System.err.println("Error loading products: " + e.getMessage());
+            e.printStackTrace();
         }
         return products;
     }
@@ -502,27 +515,52 @@ public class HomePage {
         card.getChildren().add(topRow);
         
         // Product image
-        try {
-            if (!imagePath.startsWith("/")) {
-                imagePath = "/" + imagePath;
+        StackPane imageContainer = new StackPane();
+        imageContainer.setPrefHeight(200);
+        imageContainer.setAlignment(Pos.CENTER);
+        
+        // Create a placeholder while image loads
+        Label loadingLabel = new Label("Loading...");
+        loadingLabel.setStyle("-fx-background-color: #f5f5f5; -fx-alignment: center;");
+        imageContainer.getChildren().add(loadingLabel);
+        
+        card.getChildren().add(imageContainer);
+        
+        // Load image asynchronously
+        ImageCache.getImage(imagePath).thenAccept(image -> {
+            if (image != null) {
+                System.out.println("Successfully loaded image: " + imagePath);
+                javafx.application.Platform.runLater(() -> {
+                    try {
+                        ImageView imageView = new ImageView(image);
+                        imageView.setFitWidth(190);
+                        imageView.setFitHeight(190);
+                        imageView.setPreserveRatio(true);
+                        
+                        if (imageView.getImage().isError()) {
+                            throw new Exception("Failed to load image: " + imagePath);
+                        }
+                        
+                        imageContainer.getChildren().clear();
+                        imageContainer.getChildren().add(imageView);
+                    } catch (Exception e) {
+                        System.err.println("Error displaying image: " + e.getMessage());
+                        imageContainer.getChildren().clear();
+                        Label errorLabel = new Label("Image not available");
+                        errorLabel.setStyle("-fx-background-color: #f5f5f5; -fx-alignment: center;");
+                        imageContainer.getChildren().add(errorLabel);
+                    }
+                });
+            } else {
+                System.err.println("Failed to load image: " + imagePath);
+                javafx.application.Platform.runLater(() -> {
+                    imageContainer.getChildren().clear();
+                    Label errorLabel = new Label("Image not availableeeeee");
+                    errorLabel.setStyle("-fx-background-color: #f5f5f5; -fx-alignment: center;");
+                    imageContainer.getChildren().add(errorLabel);
+                });
             }
-            ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream(imagePath)));
-            imageView.setFitWidth(190);
-            imageView.setFitHeight(190);
-            imageView.setPreserveRatio(true);
-            
-            StackPane imageContainer = new StackPane(imageView);
-            imageContainer.setAlignment(Pos.CENTER);
-            imageContainer.setPrefHeight(200);
-            card.getChildren().add(imageContainer);
-        } catch (Exception e) {
-            // Fallback for missing images
-            Label imageLabel = new Label("Image not available");
-            imageLabel.setAlignment(Pos.CENTER);
-            imageLabel.setPrefHeight(200);
-            imageLabel.setStyle("-fx-background-color: #f5f5f5; -fx-alignment: center;");
-            card.getChildren().add(imageLabel);
-        }
+        });
         
         // Product name
         Label nameLabel = new Label(name);
