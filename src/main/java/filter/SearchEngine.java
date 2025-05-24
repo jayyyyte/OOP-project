@@ -1,4 +1,4 @@
-package search;
+package filter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

@@ -1,11 +1,12 @@
-package search;
+package filter;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
-class KeywordSearchEngine extends SearchEngine {
+public class KeywordSearchEngine extends SearchEngine {
 
     public KeywordSearchEngine(String dataSource) throws IOException {
         super(dataSource);

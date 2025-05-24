@@ -1,4 +1,4 @@
-package search;
+package filter;
 
 // Remove Gson imports, use org.json consistent with SearchEngine
 import org.json.JSONArray;

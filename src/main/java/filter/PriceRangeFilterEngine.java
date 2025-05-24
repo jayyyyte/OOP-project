@@ -1,11 +1,12 @@
-package search;
+package filter;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
-class PriceRangeFilterEngine extends SearchEngine {
+public class PriceRangeFilterEngine extends SearchEngine {
 
     public PriceRangeFilterEngine(String dataSource) throws IOException {
         super(dataSource);
