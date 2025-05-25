@@ -1,0 +1,59 @@
+/* Global styles */
+.root {
+    -fx-background-color: #121212;
+}
+
+/* Top banner styles */
+.top-banner {
+    -fx-background-color: #1a3b35;
+}
+
+.banner-label {
+    -fx-text-fill: white;
+}
+
+/* Navigation bar styles */
+.nav-bar {
+    -fx-background-color: #8b0000;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 10, 0, 0, 2);
+}
+
+.logo {
+    -fx-text-fill: white;
+}
+
+.search-field {
+    -fx-background-color: #1e1e1e;
+    -fx-border-color: #333333;
+    -fx-text-fill: #e0e0e0;
+    -fx-prompt-text-fill: #888888;
+}
+
+.nav-button {
+    -fx-text-fill: white;
+    -fx-border-color: white;
+}
+
+.nav-button:hover {
+    -fx-background-color: rgba(255,255,255,0.1);
+}
+
+/* Sidebar styles */
+.sidebar {
+    -fx-background-color: #1e1e1e;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 2, 0);
+}
+
+.category-button {
+    -fx-text-fill: #e0e0e0;
+}
+
+.category-button:hover {
+    -fx-background-color: #2d2d2d;
+}
+
+/* Promotional banner styles */
+.promo-banner {
+    -fx-background-color: #662222;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 2);
+} 
