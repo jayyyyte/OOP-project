@@ -486,7 +486,7 @@ public class HomePage {
                 String.format("%,.0f %s", product.price, product.priceCurrency), // current price
                 "",  // Assuming no original price in JSON
                 "0",  // Assuming no discount percentage in JSON
-                product.imageUrl
+                product.imageUrl  // Use the same test image for all products
             );
             grid.add(productCard, i % 5, i / 5);
         }

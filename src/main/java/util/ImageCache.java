@@ -42,11 +42,21 @@ public class ImageCache {
     }
 
     private static String getFileExtension(String url) {
-        int lastDot = url.lastIndexOf('.');
-        if (lastDot != -1 && lastDot > url.lastIndexOf('/')) {
-            return url.substring(lastDot);
+        // Extract the actual image URL from CDN URL if present
+        String actualUrl = url;
+        if (url.contains("/insecure/rs:fill:")) {
+            // Extract the part after /plain/
+            int plainIndex = url.indexOf("/plain/");
+            if (plainIndex != -1) {
+                actualUrl = url.substring(plainIndex + 7);
+            }
         }
-        return ".img";
+        
+        int lastDot = actualUrl.lastIndexOf('.');
+        if (lastDot != -1 && lastDot > actualUrl.lastIndexOf('/')) {
+            return actualUrl.substring(lastDot);
+        }
+        return ".png"; // Default to PNG if no extension found
     }
 
     private static String sha256(String input) {
@@ -78,15 +88,25 @@ public class ImageCache {
 
         return CompletableFuture.supplyAsync(() -> {
             try {
+                // Extract original URL if it's a CDN URL
+                String actualUrl = imageUrl;
+                if (imageUrl.contains("/insecure/rs:fill:")) {
+                    int plainIndex = imageUrl.indexOf("/plain/");
+                    if (plainIndex != -1) {
+                        actualUrl = imageUrl.substring(plainIndex + 7);
+                    }
+                }
+                System.out.println("Using actual image URL: " + actualUrl);
+
                 // Generate cache file name from SHA-256 hash of URL and preserve extension
-                String ext = getFileExtension(imageUrl);
-                String cacheFileName = sha256(imageUrl) + ext;
+                String ext = getFileExtension(actualUrl);
+                String cacheFileName = sha256(actualUrl) + ext;
                 Path cacheFilePath = Paths.get(CACHE_DIR, cacheFileName);
                 System.out.println("Cache file path: " + cacheFilePath.toAbsolutePath());
 
                 // Check if image exists in cache
                 if (Files.exists(cacheFilePath)) {
-                    System.out.println("Image found in disk cache: " + imageUrl);
+                    System.out.println("Image found in disk cache: " + actualUrl);
                     Image image = new Image(cacheFilePath.toFile().toURI().toString(), true);
                     if (!image.isError()) {
                         imageCache.put(imageUrl, image);
@@ -94,10 +114,14 @@ public class ImageCache {
                     }
                 }
 
-                System.out.println("Downloading image from URL: " + imageUrl);
+                System.out.println("Downloading image from URL: " + actualUrl);
                 // Download and cache the image
-                URL url = new URL(imageUrl);
-                try (InputStream in = url.openStream();
+                URL url = new URL(actualUrl);
+                java.net.URLConnection connection = url.openConnection();
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+                connection.setRequestProperty("Referer", "https://cellphones.com.vn/");
+                
+                try (InputStream in = connection.getInputStream();
                      FileOutputStream out = new FileOutputStream(cacheFilePath.toFile())) {
                     byte[] buffer = new byte[1024];
                     int bytesRead;
@@ -106,14 +130,14 @@ public class ImageCache {
                     }
                 }
 
-                System.out.println("Image downloaded successfully: " + imageUrl);
+                System.out.println("Image downloaded successfully: " + actualUrl);
                 // Load and cache the image
                 Image image = new Image(cacheFilePath.toFile().toURI().toString(), true);
                 if (!image.isError()) {
                     imageCache.put(imageUrl, image);
                     return image;
                 } else {
-                    System.err.println("Error loading image from cache: " + imageUrl);
+                    System.err.println("Error loading image from cache: " + actualUrl);
                     return null;
                 }
 
