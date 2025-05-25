@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.json.JSONObject;
 import search.RAGSearchEngine;
+import search.SearchManager;
 import search.PineconeConfig;
 import util.Router;
 import java.util.*;
@@ -22,41 +23,39 @@ import java.nio.file.StandardCopyOption;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import view.HomePage.Product;
+import util.ImageCache;
+import javafx.application.Platform;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SearchResultsPage {
     private Scene scene;
     private String searchQuery;
-    private RAGSearchEngine searchEngine;
+    private RAGSearchEngine ragSearchEngine;
+    private SearchManager basicSearchManager;
+    private String searchType;
 
-    public SearchResultsPage(String searchQuery, String jsonFile) {
+    public SearchResultsPage(String searchQuery, String jsonFile, String searchType) {
         this.searchQuery = searchQuery;
+        this.searchType = searchType;
+
         try {
-            // Create a temporary file to store the JSON content
-            Path tempFile = Files.createTempFile("products", ".json");
-            
-            // Copy the resource content to the temporary file
-            try (InputStream is = getClass().getResourceAsStream("/" + jsonFile)) {
-                if (is == null) {
-                    throw new Exception("Could not find " + jsonFile + " resource");
+            if (searchType.equals("RAG Search")) {
+                String namespace;
+                if (jsonFile.equals("smartphones.json")) {
+                    namespace = PineconeConfig.NAMESPACE_SMARTPHONES;
+                } else if (jsonFile.equals("laptops.json")) {
+                    namespace = PineconeConfig.NAMESPACE_LAPTOPS;
+                } else {
+                    throw new Exception("Unsupported product category: " + jsonFile);
                 }
-                Files.copy(is, tempFile, StandardCopyOption.REPLACE_EXISTING);
-            }
-            
-            // Determine the namespace based on the JSON file
-            String namespace;
-            if (jsonFile.equals("smartphones.json")) {
-                namespace = PineconeConfig.NAMESPACE_SMARTPHONES;
-            } else if (jsonFile.equals("laptops.json")) {
-                namespace = PineconeConfig.NAMESPACE_LAPTOPS;
+                
+                // Initialize the RAG search engine with resource path
+                this.ragSearchEngine = new RAGSearchEngine("/" + jsonFile, namespace);
             } else {
-                throw new Exception("Unsupported product category: " + jsonFile);
+                // Initialize the basic search manager
+                this.basicSearchManager = new SearchManager();
             }
-            
-            // Initialize the search engine with the temporary file path and namespace
-            this.searchEngine = new RAGSearchEngine(tempFile.toString(), namespace);
-            
-            // Clean up the temporary file when the application exits
-            tempFile.toFile().deleteOnExit();
         } catch (Exception e) {
             System.err.println("Error initializing search engine: " + e.getMessage());
             e.printStackTrace();
@@ -67,8 +66,8 @@ public class SearchResultsPage {
         VBox root = new VBox(10);
         root.setPadding(new Insets(20));
 
-        // Header with search query
-        Label headerLabel = new Label("Search Results for: " + searchQuery);
+        // Header with search query and search type
+        Label headerLabel = new Label(String.format("Search Results for: %s (%s)", searchQuery, searchType));
         headerLabel.setFont(Font.font("System", FontWeight.BOLD, 24));
         root.getChildren().add(headerLabel);
 
@@ -79,28 +78,57 @@ public class SearchResultsPage {
         resultsGrid.setPadding(new Insets(20));
 
         // Check if search engine is initialized
-        if (searchEngine == null) {
+        if ((searchType.equals("RAG Search") && ragSearchEngine == null) || 
+            (searchType.equals("Basic Search") && basicSearchManager == null)) {
             Label errorLabel = new Label("Error: Search engine could not be initialized. Please try again later.");
             errorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 14px;");
             root.getChildren().add(errorLabel);
         } else {
-            // Perform search
-            Map<String, Object> searchCriteria = new HashMap<>();
-            searchCriteria.put("query", searchQuery);
-            List<JSONObject> results = searchEngine.search(searchCriteria);
+            // Perform search based on search type
+            List<JSONObject> results;
+            if (searchType.equals("RAG Search")) {
+                Map<String, Object> searchCriteria = new HashMap<>();
+                searchCriteria.put("query", searchQuery);
+                results = ragSearchEngine.search(searchCriteria);
+            } else {
+                results = basicSearchManager.search(searchQuery);
+            }
 
             if (results.isEmpty()) {
                 Label noResultsLabel = new Label("No products found matching your search criteria.");
                 noResultsLabel.setStyle("-fx-font-size: 14px;");
                 root.getChildren().add(noResultsLabel);
             } else {
+                // Create a loading indicator
+                ProgressIndicator loadingIndicator = new ProgressIndicator();
+                loadingIndicator.setMaxSize(50, 50);
+                root.getChildren().add(loadingIndicator);
+
+                // Create a list to store all image loading futures
+                List<CompletableFuture<Void>> imageLoadingFutures = new ArrayList<>();
+                List<VBox> productCards = new ArrayList<>();
+
                 // Display top 3 results
                 for (int i = 0; i < Math.min(3, results.size()); i++) {
                     JSONObject product = results.get(i);
-                    VBox productCard = createProductCard(product);
-                    resultsGrid.add(productCard, i, 0);
+                    VBox productCard = createProductCard(product, imageLoadingFutures);
+                    productCards.add(productCard);
                 }
-                root.getChildren().add(resultsGrid);
+
+                // Wait for all images to load
+                CompletableFuture.allOf(imageLoadingFutures.toArray(new CompletableFuture[0]))
+                    .thenRun(() -> {
+                        Platform.runLater(() -> {
+                            // Remove loading indicator
+                            root.getChildren().remove(loadingIndicator);
+                            
+                            // Add all product cards to the grid
+                            for (int i = 0; i < productCards.size(); i++) {
+                                resultsGrid.add(productCards.get(i), i, 0);
+                            }
+                            root.getChildren().add(resultsGrid);
+                        });
+                    });
             }
         }
 
@@ -125,7 +153,7 @@ public class SearchResultsPage {
         return scene;
     }
 
-    private VBox createProductCard(JSONObject productJson) {
+    private VBox createProductCard(JSONObject productJson, List<CompletableFuture<Void>> imageLoadingFutures) {
         VBox card = new VBox(10);
         card.setPadding(new Insets(15));
         card.setMinWidth(300);
@@ -146,27 +174,51 @@ public class SearchResultsPage {
         product.overallRating = productJson.optDouble("overallRating", 0.0);
         product.reviewCount = productJson.optInt("reviewCount", 0);
 
-        // Note: Description and reviews are not loaded here as SearchResultsPage is only for brief results.
-        // Full product details including description and reviews are loaded when navigating to ProductPage.
-
         // Product image
-        try {
-            ImageView imageView = new ImageView(new Image(product.imageUrl));
-            imageView.setFitWidth(250);
-            imageView.setFitHeight(250);
-            imageView.setPreserveRatio(true);
-            
-            StackPane imageContainer = new StackPane(imageView);
-            imageContainer.setAlignment(Pos.CENTER);
-            imageContainer.setPrefHeight(250);
-            card.getChildren().add(imageContainer);
-        } catch (Exception e) {
-            Label imageLabel = new Label("Image not available");
-            imageLabel.setAlignment(Pos.CENTER);
-            imageLabel.setPrefHeight(250);
-            imageLabel.setStyle("-fx-background-color: #f5f5f5; -fx-alignment: center;");
-            card.getChildren().add(imageLabel);
-        }
+        StackPane imageContainer = new StackPane();
+        imageContainer.setPrefHeight(250);
+        imageContainer.setAlignment(Pos.CENTER);
+        
+        // Create a placeholder while image loads
+        Label loadingLabel = new Label("Loading...");
+        loadingLabel.setStyle("-fx-background-color: #f5f5f5; -fx-alignment: center;");
+        imageContainer.getChildren().add(loadingLabel);
+        
+        card.getChildren().add(imageContainer);
+        
+        // Load image asynchronously using ImageCache
+        CompletableFuture<Void> imageLoadingFuture = ImageCache.getImage(product.imageUrl)
+            .thenAccept(image -> {
+                if (image != null) {
+                    Platform.runLater(() -> {
+                        ImageView imageView = new ImageView(image);
+                        imageView.setFitWidth(250);
+                        imageView.setFitHeight(250);
+                        imageView.setPreserveRatio(true);
+                        
+                        imageContainer.getChildren().clear();
+                        imageContainer.getChildren().add(imageView);
+                    });
+                } else {
+                    Platform.runLater(() -> {
+                        imageContainer.getChildren().clear();
+                        Label errorLabel = new Label("Image not available");
+                        errorLabel.setStyle("-fx-background-color: #f5f5f5; -fx-alignment: center;");
+                        imageContainer.getChildren().add(errorLabel);
+                    });
+                }
+            })
+            .exceptionally(throwable -> {
+                Platform.runLater(() -> {
+                    imageContainer.getChildren().clear();
+                    Label errorLabel = new Label("Error loading image");
+                    errorLabel.setStyle("-fx-background-color: #f5f5f5; -fx-alignment: center;");
+                    imageContainer.getChildren().add(errorLabel);
+                });
+                return null;
+            });
+        
+        imageLoadingFutures.add(imageLoadingFuture);
         
         // Product name
         Label nameLabel = new Label(product.name);

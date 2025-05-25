@@ -1,37 +1,33 @@
-package filter; // Make sure this package matches your project structure
+package filter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.json.JSONException; // Import JSONException explicitly
-
+import search.SearchEngine;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Locale; // For case-insensitive comparison
 
 /**
  * Engine for filtering products based on their brand, by checking if the
  * product's "name" field contains the brand name.
  * Assumes product data is loaded from a JSON data source.
  */
-public class BrandFilterEngine {
+public class BrandFilterEngine extends SearchEngine {
 
-    private List<JSONObject> allProducts; // Store all loaded products
+    private List<JSONObject> products;
 
     /**
      * Constructs a BrandFilterEngine by loading product data from the specified source.
      *
      * @param dataSource The path to the JSON data file (e.g., "products.json").
      * @throws IOException If an I/O error occurs while reading the data source.
-     * @throws JSONException If the data source is not valid JSON.
      */
-    public BrandFilterEngine(String dataSource) throws IOException, JSONException {
-        loadProducts(dataSource);
+    public BrandFilterEngine(String dataSource) throws IOException {
+        super(dataSource);
+        this.products = loadProducts();
     }
 
     /**
@@ -40,36 +36,21 @@ public class BrandFilterEngine {
      *
      * @param dataSource The path to the JSON data file.
      * @throws IOException If an I/O error occurs.
-     * @throws JSONException If the JSON is invalid or has an unexpected root structure.
      */
-    private void loadProducts(String dataSource) throws IOException, JSONException {
-        allProducts = new ArrayList<>();
-        try (InputStream is = Files.newInputStream(Paths.get(dataSource))) {
-            // Assuming the JSON file contains a root JSONArray
-            JSONTokener tokener = new JSONTokener(is);
-            Object root = tokener.nextValue();
-
-            if (root instanceof JSONArray) {
-                JSONArray jsonArray = (JSONArray) root;
-                for (int i = 0; i < jsonArray.length(); i++) {
-                     try {
-                         Object item = jsonArray.get(i);
-                         if (item instanceof JSONObject) {
-                             allProducts.add((JSONObject) item);
-                         } else {
-                              System.err.println("Skipping non-JSONObject item at index " + i + " in " + dataSource);
-                         }
-                     } catch (JSONException e) {
-                         System.err.println("Error processing item at index " + i + " in " + dataSource + ": " + e.getMessage());
-                         // Continue loading other items
-                     }
-                }
-            } else {
-                 throw new JSONException("Root element in data source is not a JSONArray: " + dataSource);
+    private List<JSONObject> loadProducts() throws IOException {
+        try (InputStream is = getClass().getResourceAsStream(dataSource)) {
+            if (is == null) {
+                throw new IOException("Could not find resource: " + dataSource);
             }
-
-        } catch (JSONException e) {
-             throw new JSONException("Invalid JSON format or structure in data source: " + dataSource, e);
+            String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            List<JSONObject> productList = new ArrayList<>();
+            JSONArray jsonArray = new JSONArray(content);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                productList.add(jsonArray.getJSONObject(i));
+            }
+            return productList;
+        } catch (Exception e) {
+            throw new IOException("Error loading data from " + dataSource + ": " + e.getMessage(), e);
         }
     }
 
@@ -82,43 +63,37 @@ public class BrandFilterEngine {
      * @return A list of JSONObject representing products whose name contains the brand,
      * or an empty list if no brand criteria is provided or no products match.
      */
+    @Override
     public List<JSONObject> search(Map<String, Object> criteria) {
-        List<JSONObject> filteredProducts = new ArrayList<>();
-
-        // Get the target brand from the criteria
-        Object brandValue = criteria.get("brand");
-
-        // If no brand criteria is provided or it's not a String, return an empty list
-        if (brandValue == null || !(brandValue instanceof String)) {
-             System.err.println("BrandFilterEngine: Missing or invalid 'brand' criteria.");
-             return filteredProducts; // Return empty list
+        List<JSONObject> results = new ArrayList<>();
+        String brand = (String) criteria.get("brand");
+        if (brand == null || brand.isEmpty()) {
+            return results;
         }
 
-        // Convert the target brand to lowercase for case-insensitive matching
-        String targetBrandLowerCase = ((String) brandValue).toLowerCase(Locale.ENGLISH);
-
-        // Filter the loaded products
-        for (JSONObject product : allProducts) {
-            try {
-                // **MODIFICATION HERE: Access and check the "name" field**
-                if (product.has("name") && product.get("name") instanceof String) {
-                    String productName = product.getString("name");
-
-                    // Check if the product's name (in lowercase) contains the target brand (in lowercase)
-                    if (productName.toLowerCase(Locale.ENGLISH).contains(targetBrandLowerCase)) {
-                        filteredProducts.add(product);
+        String brandLower = brand.toLowerCase();
+        for (JSONObject product : products) {
+            // Check if product has a brand in categoryData
+            if (product.has("categoryData")) {
+                JSONObject categoryData = product.getJSONObject("categoryData");
+                if (categoryData.has("brand")) {
+                    String productBrand = categoryData.getString("brand").toLowerCase();
+                    if (productBrand.contains(brandLower)) {
+                        results.add(product);
+                        continue;
                     }
                 }
-                // Products without a "name" field or with a non-string name are skipped.
+            }
 
-            } catch (JSONException e) {
-                 // Handle cases where a product is missing the "name" field unexpectedly
-                 // (Though the outer has() check should prevent this specific JSONException)
-                 System.err.println("Skipping product due to missing or invalid 'name' field: " + e.getMessage());
+            // Check if brand is in product name
+            if (product.has("name")) {
+                String productName = product.getString("name").toLowerCase();
+                if (productName.contains(brandLower)) {
+                    results.add(product);
+                }
             }
         }
-
-        return filteredProducts;
+        return results;
     }
 
     // You might want to add a simple printResults method here if needed.

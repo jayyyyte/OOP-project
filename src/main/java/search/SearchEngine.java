@@ -3,8 +3,8 @@ package search;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,13 +22,20 @@ public abstract class SearchEngine {
     }
 
     protected List<JSONObject> loadData(String dataSource) throws IOException {
-        String content = new String(Files.readAllBytes(Paths.get(dataSource)), "UTF-8");
-        List<JSONObject> productList = new ArrayList<>();
-        JSONArray jsonArray = new JSONArray(content);
-        for (int i = 0; i < jsonArray.length(); i++) {
-            productList.add(jsonArray.getJSONObject(i));
+        try (InputStream is = getClass().getResourceAsStream(dataSource)) {
+            if (is == null) {
+                throw new IOException("Could not find resource: " + dataSource);
+            }
+            String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            List<JSONObject> productList = new ArrayList<>();
+            JSONArray jsonArray = new JSONArray(content);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                productList.add(jsonArray.getJSONObject(i));
+            }
+            return productList;
+        } catch (Exception e) {
+            throw new IOException("Error loading data from " + dataSource + ": " + e.getMessage(), e);
         }
-        return productList;
     }
 
     public abstract List<JSONObject> search(Map<String, Object> criteria);

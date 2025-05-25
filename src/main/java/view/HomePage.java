@@ -156,6 +156,11 @@ public class HomePage {
         categoryComboBox.setValue("Smartphones"); // Default value
         categoryComboBox.getStyleClass().add("search-category");
         
+        ComboBox<String> searchTypeComboBox = new ComboBox<>();
+        searchTypeComboBox.getItems().addAll("RAG Search", "Basic Search");
+        searchTypeComboBox.setValue("RAG Search"); // Default value
+        searchTypeComboBox.getStyleClass().add("search-category");
+        
         TextField searchField = new TextField();
         searchField.setPromptText("Bạn cần tìm gì?");
         searchField.setPrefWidth(400);
@@ -166,12 +171,13 @@ public class HomePage {
             String query = searchField.getText().trim();
             if (!query.isEmpty()) {
                 String selectedCategory = categoryComboBox.getValue();
+                String searchType = searchTypeComboBox.getValue();
                 String jsonFile = selectedCategory.equals("Smartphones") ? "smartphones.json" : "laptops.json";
-                Router.navigateTo(new SearchResultsPage(query, jsonFile).createScene());
+                Router.navigateTo(new SearchResultsPage(query, jsonFile, searchType).createScene());
             }
         });
         
-        searchContainer.getChildren().addAll(categoryComboBox, searchField);
+        searchContainer.getChildren().addAll(categoryComboBox, searchTypeComboBox, searchField);
         
         // Navigation buttons
         Button cartBtn = new Button("Giỏ hàng");

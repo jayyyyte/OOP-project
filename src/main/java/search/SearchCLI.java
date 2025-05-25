@@ -1,73 +1,53 @@
 package search;
 
 import org.json.JSONObject;
-import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Map;
 
+/**
+ * Command Line Interface cho chức năng tìm kiếm.
+ * Cung cấp giao diện dòng lệnh để người dùng tương tác với SearchManager.
+ */
 public class SearchCLI {
     private final SearchManager searchManager;
-    private final RAGSearchEngine ragSearchEngine;
-    private final Scanner scanner;
-    private final String dataSource;
 
-    public SearchCLI(String dataSource) throws IOException {
-        this.dataSource = dataSource;
-        this.searchManager = new SearchManager(dataSource);
-        this.ragSearchEngine = new RAGSearchEngine(dataSource, PineconeConfig.NAMESPACE_SMARTPHONES);
-        this.scanner = new Scanner(System.in);
+    public SearchCLI() {
+        try {
+            this.searchManager = new SearchManager();
+        } catch (Exception e) {
+            System.err.println("Error initializing SearchManager: " + e.getMessage());
+            throw new RuntimeException("Failed to initialize SearchManager", e);
+        }
     }
 
     public void start() {
-        System.out.println("=== Search CLI (Development Version) ===");
-        System.out.println("Type 'exit' to quit");
-        System.out.println("Example queries:");
-        System.out.println("- iphone pin trâu giá rẻ");
-        System.out.println("- samsung giá rẻ");
-        System.out.println("- xiaomi pin trâu");
-        System.out.println("=====================================");
+        Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("\nChoose search type:");
-            System.out.println("1. Basic Search");
-            System.out.println("2. RAG Search (Pinecone)");
-            System.out.print("Enter your choice (1 or 2): ");
-            
-            String choice = scanner.nextLine().trim();
-            
-            if (choice.equalsIgnoreCase("exit")) {
-                break;
-            }
-
-            if (!choice.equals("1") && !choice.equals("2")) {
-                System.out.println("Invalid choice. Please enter 1 or 2.");
-                continue;
-            }
-
-            System.out.print("\nEnter search query: ");
+            System.out.print("\nNhập yêu cầu tìm kiếm ('exit' để thoát): ");
             String query = scanner.nextLine().trim();
 
             if (query.equalsIgnoreCase("exit")) {
+                System.out.println("Thoát chương trình tìm kiếm.");
                 break;
             }
 
             if (query.isEmpty()) {
-                System.out.println("Please enter a valid query");
+                System.out.println("Vui lòng nhập từ khóa tìm kiếm.");
                 continue;
             }
 
             try {
-                List<JSONObject> results;
-                if (choice.equals("1")) {
-                    results = searchManager.searchProducts(query);
-                } else {
-                    // For RAG search, use the existing ragSearchEngine instance
-                    results = ragSearchEngine.search(Map.of("query", query));
-                }
-                searchManager.printResults(results);
+                // Xác định loại sản phẩm từ truy vấn
+                ProductType detectedType = searchManager.determineProductType(query);
+                
+                // Thực hiện tìm kiếm
+                List<JSONObject> results = searchManager.search(query);
+                
+                // In kết quả với loại sản phẩm đã xác định
+                searchManager.printResults(results, detectedType != null ? detectedType : ProductType.PHONE);
             } catch (Exception e) {
-                System.err.println("Error during search: " + e.getMessage());
+                System.err.println("Lỗi khi tìm kiếm: " + e.getMessage());
             }
         }
 
@@ -75,13 +55,11 @@ public class SearchCLI {
     }
 
     public static void main(String[] args) {
-        // Update path to point to resources directory
-        String dataSource = "src/main/resources/products.json";
         try {
-            SearchCLI cli = new SearchCLI(dataSource);
+            SearchCLI cli = new SearchCLI();
             cli.start();
-        } catch (IOException e) {
-            System.err.println("Error initializing search system: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Lỗi khởi động chương trình: " + e.getMessage());
             e.printStackTrace();
         }
     }
