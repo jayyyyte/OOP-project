@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
+import view.HomePage.Product;
 
 public class SearchResultsPage {
     private Scene scene;
@@ -96,13 +97,7 @@ public class SearchResultsPage {
                 // Display top 3 results
                 for (int i = 0; i < Math.min(3, results.size()); i++) {
                     JSONObject product = results.get(i);
-                    VBox productCard = createProductCard(
-                        product.getString("name"),
-                        String.format("%,.0f VND", product.getDouble("price")),
-                        "", // original price
-                        "0", // discount percent
-                        product.getString("productUrl")
-                    );
+                    VBox productCard = createProductCard(product);
                     resultsGrid.add(productCard, i, 0);
                 }
                 root.getChildren().add(resultsGrid);
@@ -130,16 +125,26 @@ public class SearchResultsPage {
         return scene;
     }
 
-    private VBox createProductCard(String name, String currentPrice, String originalPrice, String discountPercent, String imagePath) {
+    private VBox createProductCard(JSONObject productJson) {
         VBox card = new VBox(10);
         card.setPadding(new Insets(15));
         card.setMinWidth(300);
         card.setMaxWidth(300);
         card.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 5;");
         
+        // Create a Product object from JSONObject
+        Product product = new Product();
+        product.name = productJson.getString("name");
+        product.productUrl = productJson.getString("productUrl");
+        product.imageUrl = productJson.getString("imageUrl");
+        product.price = productJson.getDouble("price");
+        product.priceCurrency = productJson.getString("priceCurrency");
+        product.overallRating = productJson.getDouble("overallRating");
+        product.reviewCount = productJson.getInt("reviewCount");
+
         // Product image
         try {
-            ImageView imageView = new ImageView(new Image(imagePath));
+            ImageView imageView = new ImageView(new Image(product.imageUrl));
             imageView.setFitWidth(250);
             imageView.setFitHeight(250);
             imageView.setPreserveRatio(true);
@@ -157,13 +162,13 @@ public class SearchResultsPage {
         }
         
         // Product name
-        Label nameLabel = new Label(name);
+        Label nameLabel = new Label(product.name);
         nameLabel.setWrapText(true);
         nameLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
         card.getChildren().add(nameLabel);
         
         // Price
-        Label priceLabel = new Label(currentPrice);
+        Label priceLabel = new Label(String.format("%,.0f VND", product.price*1000));
         priceLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: red;");
         card.getChildren().add(priceLabel);
         
@@ -171,7 +176,7 @@ public class SearchResultsPage {
         Button detailBtn = new Button("View Details");
         detailBtn.setStyle("-fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 5;");
         detailBtn.setPrefWidth(200);
-        detailBtn.setOnAction(e -> Router.navigateTo(new ProductPage().createScene()));
+        detailBtn.setOnAction(e -> Router.navigateTo(new ProductPage(product).createScene()));
         
         card.getChildren().add(detailBtn);
         

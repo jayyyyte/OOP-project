@@ -20,8 +20,16 @@ import javafx.stage.Stage;
 import javafx.stage.Screen;
 import javafx.geometry.Rectangle2D;
 import util.Router;
+import view.HomePage.Product;
+import util.ImageCache;
 
-public class ProductPage {
+public class ProductPage {  
+    private Product product;
+
+    public ProductPage(Product product) {
+        this.product = product;
+    }
+
     public Scene createScene() {
         BorderPane root = new BorderPane();
         root.setStyle("-fx-background-color: white;");
@@ -30,25 +38,23 @@ public class ProductPage {
         HBox header = createHeader();
         root.setTop(header);
         
-        // Main content area
+        // Main content area (Now only two sections: left scrollable and right)
         HBox mainContent = new HBox(20);
         mainContent.setPadding(new Insets(20));
         
-        // Left side - Product image and thumbnails
-        VBox leftSection = createLeftSection();
-        
-        // Center - Product features
-        VBox centerSection = createCenterSection();
+        // Left section (Scrollable content: Image/Features, Description, Reviews)
+        ScrollPane leftScrollPane = createLeftScrollPane();
         
         // Right side - Purchase options
         VBox rightSection = createRightSection();
-        
-        mainContent.getChildren().addAll(leftSection, centerSection, rightSection);
+        rightSection.setMaxWidth(400);
+
+        mainContent.getChildren().addAll(leftScrollPane, rightSection);
         root.setCenter(mainContent);
         
-        // Footer with promotions
-        VBox footer = createFooter();
-        root.setBottom(footer);
+        // // Footer with promotions
+        // VBox footer = createFooter();
+        // root.setBottom(footer);
 
         // Get screen dimensions
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
@@ -74,20 +80,25 @@ public class ProductPage {
         });
 
         // Product name
-        Label productName = new Label("iPhone 16 Pro Max 256GB | Chính hãng VN/A");
+        Label productName = new Label(product.name);
         productName.setFont(Font.font("System", FontWeight.BOLD, 20));
         
         // Star ratings
         HBox ratings = new HBox(2);
+        int rating = (int) Math.round(product.overallRating);
         for (int i = 0; i < 5; i++) {
             Label star = new Label("★");
-            star.setTextFill(Color.ORANGE);
+            if (i < rating) {
+                 star.setTextFill(Color.ORANGE);
+            } else {
+                 star.setTextFill(Color.GRAY);
+            }
             star.setFont(Font.font("System", 16));
             ratings.getChildren().add(star);
         }
         
         // Ratings count
-        Label ratingsCount = new Label("277 đánh giá");
+        Label ratingsCount = new Label(product.reviewCount + " đánh giá");
         ratingsCount.setTextFill(Color.GRAY);
         
         // Compare button
@@ -101,11 +112,39 @@ public class ProductPage {
         return header;
     }
     
-    private VBox createLeftSection() {
-        VBox leftSection = new VBox(15);
-        leftSection.setMaxWidth(400);
+    private ScrollPane createLeftScrollPane() {
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setFitToWidth(true);
+        scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+
+        VBox leftContent = new VBox(20);
+        leftContent.setPadding(new Insets(0));
+        leftContent.setAlignment(Pos.TOP_CENTER);
+
+        HBox topView = new HBox(20);
+        topView.setAlignment(Pos.TOP_LEFT);
+        topView.setPadding(new Insets(0));
+
+        VBox imageSection = createImageSection();
+
+        VBox featuresSection = createFeaturesSection();
+
+        topView.getChildren().addAll(imageSection, featuresSection);
+
+        VBox descriptionSection = createDescriptionSection();
+
+        VBox reviewsSection = createReviewsSection();
+
+        leftContent.getChildren().addAll(topView, descriptionSection, reviewsSection);
+
+        scrollPane.setContent(leftContent);
+        return scrollPane;
+    }
+    
+    private VBox createImageSection() {
+        VBox imageSection = new VBox(15);
+        imageSection.setMaxWidth(400);
         
-        // Product image with gradient background
         StackPane imageContainer = new StackPane();
         Rectangle background = new Rectangle(380, 380);
         Stop[] stops = new Stop[] { new Stop(0, Color.rgb(219, 112, 147)), new Stop(1, Color.rgb(255, 178, 107)) };
@@ -115,18 +154,24 @@ public class ProductPage {
         background.setArcHeight(20);
         
         ImageView mainImage = new ImageView();
-        // Replace with actual image path
-        try {
-            mainImage.setImage(new Image(getClass().getResourceAsStream("/images/iphone-16.png")));
-        } catch (Exception e) {
-            System.out.println("Image not found. Using placeholder.");
-            mainImage = createPlaceholderImage(350, 350);
-        }
+        ImageCache.getImage(product.imageUrl).thenAccept(image -> {
+             if (image != null) {
+                System.out.println("Successfully loaded product image: " + product.imageUrl);
+                javafx.application.Platform.runLater(() -> {
+                    mainImage.setImage(image);
+                });
+            } else {
+                System.err.println("Failed to load product image: " + product.imageUrl);
+                javafx.application.Platform.runLater(() -> {
+                    mainImage.setImage(createPlaceholderImage(350, 350).getImage());
+                });
+            }
+        });
+
         mainImage.setFitWidth(350);
         mainImage.setFitHeight(350);
         mainImage.setPreserveRatio(true);
         
-        // Heart icon
         Button heartButton = new Button("♥");
         heartButton.setStyle("-fx-background-color: white; -fx-text-fill: #e74c3c; -fx-font-size: 18px; " +
                             "-fx-background-radius: 50%; -fx-min-width: 40px; -fx-min-height: 40px; " +
@@ -136,55 +181,20 @@ public class ProductPage {
         
         imageContainer.getChildren().addAll(background, mainImage, heartButton);
         
-        // Thumbnail images
-        ScrollPane thumbnailsScroll = new ScrollPane();
-        thumbnailsScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        thumbnailsScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        thumbnailsScroll.setPrefHeight(100);
-        thumbnailsScroll.setStyle("-fx-background-color: transparent;");
-        
-        HBox thumbnails = new HBox(10);
-        thumbnails.setPadding(new Insets(10));
-        
-        // Create thumbnails (small versions of the phone from different angles)
-        for (int i = 0; i < 8; i++) {
-            VBox thumbnail = new VBox();
-            thumbnail.setAlignment(Pos.CENTER);
-            ImageView thumbImage = createPlaceholderImage(70, 70);
-            
-            // First thumbnail should be highlighted
-            if (i == 0) {
-                Label featureLabel = new Label("Tính năng nổi bật");
-                featureLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: white; -fx-background-color: #0066cc; " +
-                                      "-fx-padding: 3 5; -fx-background-radius: 3;");
-                thumbnail.getChildren().addAll(thumbImage, featureLabel);
-                thumbnail.setStyle("-fx-border-color: #0066cc; -fx-border-radius: 5;");
-            } else {
-                thumbnail.getChildren().add(thumbImage);
-                thumbnail.setStyle("-fx-border-color: #e0e0e0; -fx-border-radius: 5;");
-            }
-            
-            thumbnails.getChildren().add(thumbnail);
-        }
-        
-        thumbnailsScroll.setContent(thumbnails);
-        
-        leftSection.getChildren().addAll(imageContainer, thumbnailsScroll);
-        return leftSection;
+        imageSection.getChildren().addAll(imageContainer);
+        return imageSection;
     }
     
-    private VBox createCenterSection() {
-        VBox centerSection = new VBox(15);
-        centerSection.setStyle("-fx-background-color: linear-gradient(to right, #db7093, #ffb26b); -fx-background-radius: 15;");
-        centerSection.setPadding(new Insets(20));
-        centerSection.setMaxWidth(320);
+    private VBox createFeaturesSection() {
+        VBox featuresSection = new VBox(15);
+        featuresSection.setStyle("-fx-background-color: linear-gradient(to right, #db7093, #ffb26b); -fx-background-radius: 15;");
+        featuresSection.setPadding(new Insets(20));
+        featuresSection.setMaxWidth(320);
         
-        // Feature title
         Label featureTitle = new Label("TÍNH NĂNG NỔI BẬT");
         featureTitle.setFont(Font.font("System", FontWeight.BOLD, 18));
         featureTitle.setTextFill(Color.WHITE);
         
-        // Feature list
         VBox featureList = new VBox(15);
         
         String[] features = {
@@ -209,18 +219,60 @@ public class ProductPage {
             featureList.getChildren().add(featureItem);
         }
         
-        // Next/Previous buttons
-        HBox navigationButtons = new HBox();
-        navigationButtons.setAlignment(Pos.CENTER_RIGHT);
+        featuresSection.getChildren().addAll(featureTitle, featureList);
+        return featuresSection;
+    }
+    
+    private VBox createDescriptionSection() {
+        VBox descriptionSection = new VBox(10);
+        descriptionSection.setPadding(new Insets(20));
+        descriptionSection.setStyle("-fx-background-color: white; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 1);");
+        descriptionSection.getStyleClass().add("description-section");
+        descriptionSection.setMaxWidth(750);
         
-        Button nextButton = new Button(">");
-        nextButton.setStyle("-fx-background-color: white; -fx-text-fill: #666; -fx-background-radius: 50%; " +
-                           "-fx-min-width: 40px; -fx-min-height: 40px; -fx-padding: 0;");
+        Label descriptionTitle = new Label("Mô tả sản phẩm");
+        descriptionTitle.setFont(Font.font("System", FontWeight.BOLD, 18));
         
-        navigationButtons.getChildren().add(nextButton);
+        Label descriptionContent = new Label(product.description != null ? product.description : "Không có mô tả sản phẩm.");
+        descriptionContent.setWrapText(true);
         
-        centerSection.getChildren().addAll(featureTitle, featureList, navigationButtons);
-        return centerSection;
+        descriptionSection.getChildren().addAll(descriptionTitle, descriptionContent);
+        return descriptionSection;
+    }
+
+    private VBox createReviewsSection() {
+        VBox reviewsSection = new VBox(15);
+        reviewsSection.setPadding(new Insets(20));
+        reviewsSection.setStyle("-fx-background-color: white; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 1);");
+        reviewsSection.getStyleClass().add("reviews-section");
+        reviewsSection.setMaxWidth(750);
+        
+        Label reviewsTitle = new Label("Đánh giá sản phẩm");
+        reviewsTitle.setFont(Font.font("System", FontWeight.BOLD, 18));
+        
+        reviewsSection.getChildren().add(reviewsTitle);
+
+        if (product.reviews != null && !product.reviews.isEmpty()) {
+            for (Product.Review review : product.reviews) {
+                VBox reviewBox = new VBox(5);
+                reviewBox.setStyle("-fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-padding: 10;");
+
+                Label authorLabel = new Label(review.author != null ? review.author : "Ẩn danh");
+                authorLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+
+                Label contentLabel = new Label(review.content != null ? review.content : "Không có nội dung đánh giá.");
+                contentLabel.setWrapText(true);
+
+                reviewBox.getChildren().addAll(authorLabel, contentLabel);
+                reviewsSection.getChildren().add(reviewBox);
+            }
+        } else {
+            Label noReviewsLabel = new Label("Chưa có đánh giá nào cho sản phẩm này.");
+            noReviewsLabel.setTextFill(Color.GRAY);
+            reviewsSection.getChildren().add(noReviewsLabel);
+        }
+        
+        return reviewsSection;
     }
     
     private VBox createRightSection() {
@@ -228,7 +280,6 @@ public class ProductPage {
         rightSection.setPadding(new Insets(10));
         rightSection.setMaxWidth(400);
         
-        // Storage options
         Label storageLabel = new Label("Chọn dung lượng");
         storageLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
         
@@ -258,7 +309,6 @@ public class ProductPage {
             Label price = new Label(data[1]);
             price.setFont(Font.font("System", 12));
             
-            // Set the last option (256GB) as selected
             if (data[0].equals("256GB")) {
                 toggle.setSelected(true);
                 option.setStyle("-fx-border-color: #e74c3c; -fx-border-radius: 5;");
@@ -270,7 +320,6 @@ public class ProductPage {
             storageOptions.getChildren().add(option);
         }
         
-        // Color options
         Label colorLabel = new Label("Chọn màu để xem giá và chỉ nhánh có hàng");
         colorLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
         
@@ -303,7 +352,6 @@ public class ProductPage {
             colorSwatch.setArcWidth(5);
             colorSwatch.setArcHeight(5);
             
-            // Set different colors based on the name
             switch (colorData[i][0]) {
                 case "Titan Tự Nhiên":
                     colorSwatch.setFill(Color.rgb(200, 180, 160));
@@ -329,7 +377,6 @@ public class ProductPage {
             textInfo.getChildren().addAll(colorName, colorPrice);
             colorInfo.getChildren().addAll(colorSwatch, textInfo);
             
-            // Set the appropriate option as selected
             if (colorData[i][0].equals("Titan Đen")) {
                 toggle.setSelected(true);
                 option.setStyle("-fx-border-color: #e74c3c; -fx-border-radius: 5;");
@@ -341,7 +388,6 @@ public class ProductPage {
             colorOptions.add(option, i % 2, i / 2);
         }
         
-        // Pricing section
         HBox pricingSection = new HBox(15);
         
         VBox tradeInPrice = new VBox(5);
@@ -377,7 +423,6 @@ public class ProductPage {
         
         pricingSection.getChildren().addAll(tradeInPrice, regularPrice);
         
-        // Member discount
         HBox memberDiscount = new HBox(5);
         memberDiscount.setAlignment(Pos.CENTER_LEFT);
         
@@ -393,11 +438,8 @@ public class ProductPage {
         
         memberDiscount.getChildren().addAll(discountLabel, discountAmount, memberLabel);
         
-        // Check final price link
         Hyperlink checkPriceLink = new Hyperlink("Kiểm tra giá cuối cùng của bạn >");
         checkPriceLink.setTextFill(Color.RED);
-        
-        // Buy buttons would go here
         
         rightSection.getChildren().addAll(
             storageLabel, storageOptions, 
@@ -408,58 +450,10 @@ public class ProductPage {
         return rightSection;
     }
     
-    private VBox createFooter() {
-        VBox footer = new VBox(15);
-        footer.setPadding(new Insets(15));
-        
-        // Promotion banner
-        HBox promotion = new HBox();
-        promotion.setPrefHeight(100);
-        promotion.setStyle("-fx-background-color: #ffb6c1; -fx-background-radius: 10;");
-        promotion.setPadding(new Insets(15));
-        promotion.setAlignment(Pos.CENTER_LEFT);
-        
-        Label promoText = new Label("TẶNG 300K Cho khách hàng mới Khi mua iPhone 16 Pro Max");
-        promoText.setFont(Font.font("System", FontWeight.BOLD, 18));
-        promoText.setTextFill(Color.WHITE);
-        
-        Button promoButton = new Button("Nhận Ngay");
-        promoButton.setStyle("-fx-background-color: white; -fx-text-fill: #e74c3c;");
-        
-        Region promoSpacer = new Region();
-        HBox.setHgrow(promoSpacer, Priority.ALWAYS);
-        
-        promotion.getChildren().addAll(promoText, promoSpacer, promoButton);
-        
-        // Promotions section
-        HBox promotionsSection = new HBox(15);
-        
-        // Gift icon
-        Label giftIcon = new Label("🎁");
-        giftIcon.setFont(Font.font("System", 24));
-        
-        Label promoTitle = new Label("Khuyến mãi");
-        promoTitle.setFont(Font.font("System", FontWeight.BOLD, 16));
-        
-        // Customer service
-        Button customerServiceButton = new Button("Chat với nhân viên tư vấn");
-        customerServiceButton.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white;");
-        
-        Region promotionSpacer = new Region();
-        HBox.setHgrow(promotionSpacer, Priority.ALWAYS);
-        
-        promotionsSection.getChildren().addAll(giftIcon, promoTitle, promotionSpacer, customerServiceButton);
-        
-        footer.getChildren().addAll(promotion, promotionsSection);
-        return footer;
-    }
-    
     private ImageView createPlaceholderImage(double width, double height) {
-        // Create a placeholder image when actual images are not available
         Rectangle placeholder = new Rectangle(width, height);
         placeholder.setFill(Color.LIGHTGRAY);
         
-        // Convert Rectangle to Image
         ImageView imageView = new ImageView();
         imageView.setFitWidth(width);
         imageView.setFitHeight(height);

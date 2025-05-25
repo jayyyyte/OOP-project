@@ -97,3 +97,15 @@
 .feature-item {
     -fx-text-fill: white;
 }
+
+.description-section, .reviews-section {
+    -fx-text-fill: #333333; /* Dark gray text color */
+}
+
+.reviews-section .label {
+    -fx-text-fill: #333333; /* Ensure review labels also have dark text */
+}
+
+.description-section .label {
+    -fx-text-fill: #333333; /* Ensure description labels also have dark text */
+}
