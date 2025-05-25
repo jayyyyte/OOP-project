@@ -228,7 +228,7 @@ public class ProductPage {
         descriptionSection.setPadding(new Insets(20));
         descriptionSection.setStyle("-fx-background-color: white; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 1);");
         descriptionSection.getStyleClass().add("description-section");
-        descriptionSection.setMaxWidth(750);
+        descriptionSection.setMaxWidth(1000);
         
         Label descriptionTitle = new Label("Mô tả sản phẩm");
         descriptionTitle.setFont(Font.font("System", FontWeight.BOLD, 18));
@@ -245,7 +245,7 @@ public class ProductPage {
         reviewsSection.setPadding(new Insets(20));
         reviewsSection.setStyle("-fx-background-color: white; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 1);");
         reviewsSection.getStyleClass().add("reviews-section");
-        reviewsSection.setMaxWidth(750);
+        reviewsSection.setMaxWidth(1000);
         
         Label reviewsTitle = new Label("Đánh giá sản phẩm");
         reviewsTitle.setFont(Font.font("System", FontWeight.BOLD, 18));
@@ -280,171 +280,56 @@ public class ProductPage {
         rightSection.setPadding(new Insets(10));
         rightSection.setMaxWidth(400);
         
-        Label storageLabel = new Label("Chọn dung lượng");
-        storageLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
-        
-        HBox storageOptions = new HBox(10);
-        
-        String[][] storageData = {
-            {"1TB", "42.990.000 đ"},
-            {"512GB", "37.490.000 đ"},
-            {"256GB", "30.990.000 đ"}
-        };
-        
-        ToggleGroup storageGroup = new ToggleGroup();
-        
-        for (String[] data : storageData) {
-            VBox option = new VBox(5);
-            option.setAlignment(Pos.CENTER);
-            option.setPadding(new Insets(10));
-            option.setPrefWidth(100);
-            
-            ToggleButton toggle = new ToggleButton(data[0]);
-            toggle.setToggleGroup(storageGroup);
-            toggle.setStyle("-fx-background-color: transparent; -fx-opacity: 0;");
-            
-            Label capacity = new Label(data[0]);
-            capacity.setFont(Font.font("System", FontWeight.BOLD, 14));
-            
-            Label price = new Label(data[1]);
-            price.setFont(Font.font("System", 12));
-            
-            if (data[0].equals("256GB")) {
-                toggle.setSelected(true);
-                option.setStyle("-fx-border-color: #e74c3c; -fx-border-radius: 5;");
-            } else {
-                option.setStyle("-fx-border-color: #e0e0e0; -fx-border-radius: 5;");
-            }
-            
-            option.getChildren().addAll(capacity, price, toggle);
-            storageOptions.getChildren().add(option);
-        }
-        
-        Label colorLabel = new Label("Chọn màu để xem giá và chỉ nhánh có hàng");
-        colorLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
-        
-        GridPane colorOptions = new GridPane();
-        colorOptions.setHgap(10);
-        colorOptions.setVgap(10);
-        
-        String[][] colorData = {
-            {"Titan Tự Nhiên", "31.290.000đ"},
-            {"Titan Đen", "30.990.000đ"},
-            {"Titan Sa Mạc", "30.990.000đ"},
-            {"Titan Trắng", "30.990.000đ"}
-        };
-        
-        ToggleGroup colorGroup = new ToggleGroup();
-        
-        for (int i = 0; i < colorData.length; i++) {
-            VBox option = new VBox(5);
-            option.setAlignment(Pos.CENTER_LEFT);
-            option.setPadding(new Insets(10));
-            option.setPrefWidth(185);
-            
-            ToggleButton toggle = new ToggleButton(colorData[i][0]);
-            toggle.setToggleGroup(colorGroup);
-            toggle.setStyle("-fx-background-color: transparent; -fx-opacity: 0;");
-            
-            HBox colorInfo = new HBox(10);
-            
-            Rectangle colorSwatch = new Rectangle(20, 20);
-            colorSwatch.setArcWidth(5);
-            colorSwatch.setArcHeight(5);
-            
-            switch (colorData[i][0]) {
-                case "Titan Tự Nhiên":
-                    colorSwatch.setFill(Color.rgb(200, 180, 160));
-                    break;
-                case "Titan Đen":
-                    colorSwatch.setFill(Color.rgb(50, 50, 50));
-                    break;
-                case "Titan Sa Mạc":
-                    colorSwatch.setFill(Color.rgb(220, 200, 180));
-                    break;
-                case "Titan Trắng":
-                    colorSwatch.setFill(Color.rgb(240, 240, 240));
-                    break;
-            }
-            
-            VBox textInfo = new VBox(2);
-            Label colorName = new Label(colorData[i][0]);
-            colorName.setFont(Font.font("System", FontWeight.BOLD, 12));
-            
-            Label colorPrice = new Label(colorData[i][1]);
-            colorPrice.setFont(Font.font("System", 12));
-            
-            textInfo.getChildren().addAll(colorName, colorPrice);
-            colorInfo.getChildren().addAll(colorSwatch, textInfo);
-            
-            if (colorData[i][0].equals("Titan Đen")) {
-                toggle.setSelected(true);
-                option.setStyle("-fx-border-color: #e74c3c; -fx-border-radius: 5;");
-            } else {
-                option.setStyle("-fx-border-color: #e0e0e0; -fx-border-radius: 5;");
-            }
-            
-            option.getChildren().addAll(colorInfo, toggle);
-            colorOptions.add(option, i % 2, i / 2);
-        }
-        
         HBox pricingSection = new HBox(15);
         
+        // Trade-in price
         VBox tradeInPrice = new VBox(5);
         tradeInPrice.setAlignment(Pos.CENTER);
         tradeInPrice.setPadding(new Insets(10));
         tradeInPrice.setStyle("-fx-background-color: #f5f5f5; -fx-background-radius: 5;");
         
-        Label tradeInPriceValue = new Label("27.990.000đ");
-        tradeInPriceValue.setFont(Font.font("System", FontWeight.BOLD, 18));
+        // Calculate and display trade-in price (70% of product price)
+        double tradeInPriceValue = product.price * 0.7;
+        Label tradeInPriceLabel = new Label(String.format("%,.0f %s", tradeInPriceValue * 1000, product.priceCurrency));
+        tradeInPriceLabel.setFont(Font.font("System", FontWeight.BOLD, 18));
         
         Label tradeInLabel = new Label("Khi thu cũ lên đời");
         tradeInLabel.setFont(Font.font("System", 12));
         tradeInLabel.setTextFill(Color.GRAY);
         
-        tradeInPrice.getChildren().addAll(tradeInPriceValue, tradeInLabel);
+        tradeInPrice.getChildren().addAll(tradeInPriceLabel, tradeInLabel);
         
+        // Regular price
         VBox regularPrice = new VBox(5);
         regularPrice.setAlignment(Pos.CENTER);
         regularPrice.setPadding(new Insets(10));
         regularPrice.setPrefWidth(200);
         regularPrice.setStyle("-fx-background-color: white; -fx-border-color: #e74c3c; -fx-border-radius: 5;");
         
-        Label currentPrice = new Label("30.990.000đ");
-        currentPrice.setFont(Font.font("System", FontWeight.BOLD, 18));
-        currentPrice.setTextFill(Color.RED);
+        // Display the actual current price
+        Label currentPriceLabel = new Label(String.format("%,.0f %s", product.price * 1000, product.priceCurrency));
+        currentPriceLabel.setFont(Font.font("System", FontWeight.BOLD, 18));
+        currentPriceLabel.setTextFill(Color.RED);
         
-        Label originalPrice = new Label("34.990.000đ");
-        originalPrice.setFont(Font.font("System", 14));
-        originalPrice.setTextFill(Color.GRAY);
-        originalPrice.setStyle("-fx-strikethrough: true;");
+        // Assuming no original price in JSON for now
+        Label originalPriceLabel = new Label(""); // Placeholder for original price if available
+        originalPriceLabel.setFont(Font.font("System", 14));
+        originalPriceLabel.setTextFill(Color.GRAY);
+        originalPriceLabel.setStyle("-fx-strikethrough: true;");
         
-        regularPrice.getChildren().addAll(currentPrice, originalPrice);
+        regularPrice.getChildren().addAll(currentPriceLabel, originalPriceLabel);
         
         pricingSection.getChildren().addAll(tradeInPrice, regularPrice);
         
-        HBox memberDiscount = new HBox(5);
-        memberDiscount.setAlignment(Pos.CENTER_LEFT);
-        
-        Label discountLabel = new Label("Tiết kiệm thêm đến ");
-        discountLabel.setFont(Font.font("System", 14));
-        
-        Label discountAmount = new Label("310.000đ");
-        discountAmount.setFont(Font.font("System", FontWeight.BOLD, 14));
-        discountAmount.setTextFill(Color.RED);
-        
-        Label memberLabel = new Label(" cho Smember");
-        memberLabel.setFont(Font.font("System", 14));
-        
-        memberDiscount.getChildren().addAll(discountLabel, discountAmount, memberLabel);
-        
-        Hyperlink checkPriceLink = new Hyperlink("Kiểm tra giá cuối cùng của bạn >");
-        checkPriceLink.setTextFill(Color.RED);
-        
+        // Buy now button
+        Button buyNowButton = new Button("Mua ngay");
+        buyNowButton.setStyle("-fx-background-color: #cd1818; -fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 15 30; -fx-background-radius: 5;");
+        buyNowButton.setMaxWidth(Double.MAX_VALUE); // Make the button fill the width
+        buyNowButton.setAlignment(Pos.CENTER);
+
         rightSection.getChildren().addAll(
-            storageLabel, storageOptions, 
-            colorLabel, colorOptions, 
-            pricingSection, memberDiscount, checkPriceLink
+            pricingSection,
+            buyNowButton // Add the buy now button
         );
         
         return rightSection;

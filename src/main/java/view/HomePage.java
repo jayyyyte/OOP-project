@@ -485,11 +485,7 @@ public class HomePage {
         Label currentPriceLabel = new Label(String.format("%,.0f %s", product.price*1000, product.priceCurrency));
         currentPriceLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: red;");
         priceBox.getChildren().add(currentPriceLabel);
-        
-        // Additional benefits (hardcoded for now)
-        Label benefitLabel = new Label("Smember giảm thêm đến 310.000đ");
-        benefitLabel.setFont(Font.font("System", 12));
-        card.getChildren().add(benefitLabel);
+        card.getChildren().add(priceBox);
         
         // Rating and details button
         HBox bottomRow = new HBox();
