@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.json.JSONObject;
 import search.RAGSearchEngine;
+import search.PineconeConfig;
 import util.Router;
 import java.util.*;
 import javafx.geometry.Pos;
@@ -26,22 +27,32 @@ public class SearchResultsPage {
     private String searchQuery;
     private RAGSearchEngine searchEngine;
 
-    public SearchResultsPage(String searchQuery) {
+    public SearchResultsPage(String searchQuery, String jsonFile) {
         this.searchQuery = searchQuery;
         try {
-            // Create a temporary file to store the products.json content
+            // Create a temporary file to store the JSON content
             Path tempFile = Files.createTempFile("products", ".json");
             
             // Copy the resource content to the temporary file
-            try (InputStream is = getClass().getResourceAsStream("/products.json")) {
+            try (InputStream is = getClass().getResourceAsStream("/" + jsonFile)) {
                 if (is == null) {
-                    throw new Exception("Could not find products.json resource");
+                    throw new Exception("Could not find " + jsonFile + " resource");
                 }
                 Files.copy(is, tempFile, StandardCopyOption.REPLACE_EXISTING);
             }
             
-            // Initialize the search engine with the temporary file path
-            this.searchEngine = new RAGSearchEngine(tempFile.toString());
+            // Determine the namespace based on the JSON file
+            String namespace;
+            if (jsonFile.equals("smartphones.json")) {
+                namespace = PineconeConfig.NAMESPACE_SMARTPHONES;
+            } else if (jsonFile.equals("laptops.json")) {
+                namespace = PineconeConfig.NAMESPACE_LAPTOPS;
+            } else {
+                throw new Exception("Unsupported product category: " + jsonFile);
+            }
+            
+            // Initialize the search engine with the temporary file path and namespace
+            this.searchEngine = new RAGSearchEngine(tempFile.toString(), namespace);
             
             // Clean up the temporary file when the application exits
             tempFile.toFile().deleteOnExit();

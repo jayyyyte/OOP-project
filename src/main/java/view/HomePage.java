@@ -237,6 +237,14 @@ public class HomePage {
         logo.getStyleClass().add("logo");
 
         // Search bar
+        HBox searchContainer = new HBox(5);
+        searchContainer.setAlignment(Pos.CENTER);
+        
+        ComboBox<String> categoryComboBox = new ComboBox<>();
+        categoryComboBox.getItems().addAll("Smartphones", "Laptops");
+        categoryComboBox.setValue("Smartphones"); // Default value
+        categoryComboBox.getStyleClass().add("search-category");
+        
         TextField searchField = new TextField();
         searchField.setPromptText("Ban can tim gi?");
         searchField.setPrefWidth(400);
@@ -246,9 +254,13 @@ public class HomePage {
         searchField.setOnAction(e -> {
             String query = searchField.getText().trim();
             if (!query.isEmpty()) {
-                Router.navigateTo(new SearchResultsPage(query).createScene());
+                String selectedCategory = categoryComboBox.getValue();
+                String jsonFile = selectedCategory.equals("Smartphones") ? "smartphones.json" : "laptops.json";
+                Router.navigateTo(new SearchResultsPage(query, jsonFile).createScene());
             }
         });
+        
+        searchContainer.getChildren().addAll(categoryComboBox, searchField);
         
         // Navigation buttons
         Button categoryBtn = new Button("Danh muc");
@@ -277,7 +289,7 @@ public class HomePage {
             logo, 
             categoryBtn,    
             locationBtn,    
-            searchField, 
+            searchContainer, 
             spacer, 
             cartBtn, 
             orderBtn, 
@@ -483,7 +495,7 @@ public class HomePage {
             Product product = products.get(i);
             VBox productCard = createProductCard(
                 product.name, // name
-                String.format("%,.0f %s", product.price, product.priceCurrency), // current price
+                String.format("%,.0f %s", product.price*1000, product.priceCurrency), // current price
                 "",  // Assuming no original price in JSON
                 "0",  // Assuming no discount percentage in JSON
                 product.imageUrl  // Use the same test image for all products

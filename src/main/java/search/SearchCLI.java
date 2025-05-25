@@ -10,10 +10,12 @@ public class SearchCLI {
     private final SearchManager searchManager;
     private final RAGSearchEngine ragSearchEngine;
     private final Scanner scanner;
+    private final String dataSource;
 
     public SearchCLI(String dataSource) throws IOException {
+        this.dataSource = dataSource;
         this.searchManager = new SearchManager(dataSource);
-        this.ragSearchEngine = new RAGSearchEngine(dataSource);
+        this.ragSearchEngine = new RAGSearchEngine(dataSource, PineconeConfig.NAMESPACE_SMARTPHONES);
         this.scanner = new Scanner(System.in);
     }
 
@@ -60,7 +62,7 @@ public class SearchCLI {
                 if (choice.equals("1")) {
                     results = searchManager.searchProducts(query);
                 } else {
-                    // For RAG search, we'll use a different approach
+                    // For RAG search, use the existing ragSearchEngine instance
                     results = ragSearchEngine.search(Map.of("query", query));
                 }
                 searchManager.printResults(results);

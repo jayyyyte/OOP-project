@@ -12,9 +12,11 @@ import java.util.concurrent.TimeUnit;
 
 public class RAGSearchEngine extends SearchEngine {
     private final OkHttpClient client;
+    private final String namespace;
     
-    public RAGSearchEngine(String dataSource) throws IOException {
+    public RAGSearchEngine(String dataSource, String namespace) throws IOException {
         super(dataSource);
+        this.namespace = namespace;
         this.client = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
@@ -60,8 +62,8 @@ public class RAGSearchEngine extends SearchEngine {
             returnFields.put("categoryData");
             requestBody.put("fields", returnFields);
 
-            // Create the HTTP request
-            String url = "https://" + PineconeConfig.INDEX_HOST + "/records/namespaces/" + PineconeConfig.NAMESPACE + "/search";
+            // Create the HTTP request with the specific namespace
+            String url = "https://" + PineconeConfig.INDEX_HOST + "/records/namespaces/" + namespace + "/search";
             Request request = new Request.Builder()
                 .url(url)
                 .addHeader("Accept", "application/json")
