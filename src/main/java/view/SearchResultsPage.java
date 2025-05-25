@@ -134,13 +134,20 @@ public class SearchResultsPage {
         
         // Create a Product object from JSONObject
         Product product = new Product();
-        product.name = productJson.getString("name");
-        product.productUrl = productJson.getString("productUrl");
-        product.imageUrl = productJson.getString("imageUrl");
-        product.price = productJson.getDouble("price");
-        product.priceCurrency = productJson.getString("priceCurrency");
-        product.overallRating = productJson.getDouble("overallRating");
-        product.reviewCount = productJson.getInt("reviewCount");
+        
+        // Safely extract string values with containsKey check
+        product.name = productJson.has("name") ? productJson.getString("name") : "";
+        product.productUrl = productJson.has("productUrl") ? productJson.getString("productUrl") : "";
+        product.imageUrl = productJson.has("imageUrl") ? productJson.getString("imageUrl") : "";
+        
+        // Use optDouble/optInt for numeric values as they support default values
+        product.price = productJson.optDouble("price", 0.0);
+        product.priceCurrency = productJson.has("priceCurrency") ? productJson.getString("priceCurrency") : "";
+        product.overallRating = productJson.optDouble("overallRating", 0.0);
+        product.reviewCount = productJson.optInt("reviewCount", 0);
+
+        // Note: Description and reviews are not loaded here as SearchResultsPage is only for brief results.
+        // Full product details including description and reviews are loaded when navigating to ProductPage.
 
         // Product image
         try {

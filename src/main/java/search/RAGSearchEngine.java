@@ -60,6 +60,7 @@ public class RAGSearchEngine extends SearchEngine {
             returnFields.put("specifications");
             returnFields.put("overallRating");
             returnFields.put("categoryData");
+            returnFields.put("imageUrl");
             requestBody.put("fields", returnFields);
 
             // Create the HTTP request with the specific namespace
@@ -153,6 +154,7 @@ public class RAGSearchEngine extends SearchEngine {
                             product.put("description", hitFields.optString("description", ""));
                             product.put("price", hitFields.optDouble("price", 0.0));
                             product.put("productUrl", hitFields.optString("productUrl", ""));
+                            product.put("imageUrl", hitFields.optString("imageUrl", ""));
                             
                             // Add specifications if available
                             if (hitFields.has("specifications")) {
