@@ -38,8 +38,8 @@ public class CrawlerApp {
                 crawler.close();
             }
 
-            JsonSerializer.saveToJson(smartphones, "smartphones.json");
-            JsonSerializer.saveToJson(laptops, "laptops.json");
+            JsonSerializer.saveToJson(smartphones, "src/main/resources/smartphones.json");
+            JsonSerializer.saveToJson(laptops, "src/main/resources/laptops.json");
 
             System.out.println("Total smartphones scraped: " + smartphones.size());
             System.out.println("Total laptops scraped: " + laptops.size());
