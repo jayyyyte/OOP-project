@@ -226,7 +226,11 @@ public class ProductSearcher {
         System.out.println("Kết quả tìm kiếm (" + results.size() + " sản phẩm):");
         for (JSONObject product : results) {
             System.out.println("- Tên: " + product.optString("name", "N/A"));
-            System.out.println("  Giá: " + product.optDouble("price", 0.0) + " VND");
+            double rawPrice = product.optDouble("price", 0.0);
+         // Nhân thêm 1000 để từ "27990.0" thành "27990000"
+            long displayPrice = (long) (rawPrice * 1000);
+         // In ra
+            System.out.println("  Giá: " + displayPrice + " VND");
             System.out.println("  URL: " + product.optString("productUrl", "N/A"));
             System.out.println("-----");
         }

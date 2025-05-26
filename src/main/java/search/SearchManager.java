@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.HashSet;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * Lớp SearchManager là điểm vào chính của ứng dụng tìm kiếm.
@@ -35,13 +37,13 @@ public class SearchManager {
 
     // Các định nghĩa cấu hình cho LAPTOP
     private static final Set<String> LAPTOP_BRANDS = new HashSet<>(
-        Arrays.asList("dell", "hp", "asus", "lenovo", "acer", "msi", "apple", "microsoft", "gigabyte", "razer")
+        Arrays.asList("dell", "hp", "asus", "lenovo", "acer", "msi", "apple", "microsoft", "gigabyte", "razer","macbook")
     );
     private static final Set<String> LAPTOP_GENERAL_KEYWORDS = new HashSet<>(
         Arrays.asList("laptop", "máy tính xách tay", "notebook", "pc")
     );
     // Điều chỉnh ngưỡng giá và pin phù hợp với dữ liệu laptop của bạn
-    private static final double LAPTOP_MAX_CHEAP_PRICE = 20000.0; // Ví dụ: dưới 20 triệu VND
+    private static final double LAPTOP_MAX_CHEAP_PRICE = 25000.0; // Ví dụ: dưới 20 triệu VND
     private static final int LAPTOP_MIN_STRONG_BATTERY = 40000; // Ví dụ: 40000 mWh hoặc 40 Wh
 
     /**
@@ -166,7 +168,9 @@ public class SearchManager {
             System.out.println("Kết quả tìm kiếm (" + results.size() + " sản phẩm):");
             for (JSONObject product : results) {
                 System.out.println("- Tên: " + product.optString("name", "N/A"));
-                System.out.println("  Giá: " + product.optDouble("price", 0.0) + " VND");
+                double rawPrice = product.optDouble("price", 0.0);
+                long displayPrice = (long) (rawPrice * 1000);
+                System.out.println("  Giá: " + displayPrice + " VND");
                 JSONObject specifications = product.optJSONObject("specifications");
                 if (specifications != null) {
                     System.out.println("  Pin: " + specifications.optInt("battery", 0) + " (N/A đơn vị)");

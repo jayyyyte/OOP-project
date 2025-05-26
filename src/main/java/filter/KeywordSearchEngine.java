@@ -1,12 +1,16 @@
 package filter;
+
 import org.json.JSONObject;
+import search.SearchEngine;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class KeywordSearchEngine extends SearchEngine {
+
+    public static final String CRITERIA_KEYWORD = "keyword";
 
     public KeywordSearchEngine(String dataSource) throws IOException {
         super(dataSource);
@@ -14,29 +18,35 @@ public class KeywordSearchEngine extends SearchEngine {
 
     @Override
     public List<JSONObject> search(Map<String, Object> criteria) {
-        List<JSONObject> results = new ArrayList<>();
-        if (criteria == null || !criteria.containsKey("keyword")) {
+        // Nếu không có criteria hoặc không chứa 'keyword', trả về toàn bộ data
+        if (criteria == null || !criteria.containsKey(CRITERIA_KEYWORD)) {
             return data;
         }
-        String keyword = ((String) criteria.get("keyword")).toLowerCase();
-        String[] keywords = keyword.split("\\s+");
 
+        String keyword = ((String) criteria.get(CRITERIA_KEYWORD)).toLowerCase();
+        String[] words = keyword.split("\\s+");
+
+        List<JSONObject> results = new ArrayList<>();
         for (JSONObject product : data) {
-            boolean foundAll = true;
-            for (String word : keywords) {
-                boolean foundInProduct = false;
-                if (product.has("name") && product.getString("name").toLowerCase().contains(word)) {
-                    foundInProduct = true;
+            boolean allMatch = true;
+
+            for (String w : words) {
+                String low = w.trim();
+                boolean found = false;
+
+                if (product.optString("name", "").toLowerCase().contains(low)) {
+                    found = true;
+                } else if (product.optString("description", "").toLowerCase().contains(low)) {
+                    found = true;
                 }
-                if (product.has("description") && product.getString("description").toLowerCase().contains(word)) {
-                    foundInProduct = true;
-                }
-                if (!foundInProduct) {
-                    foundAll = false;
+
+                if (!found) {
+                    allMatch = false;
                     break;
                 }
             }
-            if (foundAll) {
+
+            if (allMatch) {
                 results.add(product);
             }
         }

@@ -1,8 +1,10 @@
-package filter;
+package search;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -11,7 +13,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 // Abstract class định nghĩa cấu trúc chung cho các engine tìm kiếm
-abstract class SearchEngine {
+public abstract class SearchEngine {
 
     protected List<JSONObject> data;
     protected String dataSource;
@@ -22,9 +24,14 @@ abstract class SearchEngine {
     }
 
     protected List<JSONObject> loadData(String dataSource) throws IOException {
-        String content = new String(Files.readAllBytes(Paths.get(dataSource)), "UTF-8");
-        List<JSONObject> productList = new ArrayList<>();
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(dataSource);
+        if (inputStream == null) {
+            throw new IOException("Không tìm thấy file: " + dataSource);
+        }
+
+        String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         JSONArray jsonArray = new JSONArray(content);
+        List<JSONObject> productList = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             productList.add(jsonArray.getJSONObject(i));
         }
