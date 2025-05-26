@@ -23,7 +23,6 @@ public abstract class AbstractProduct {
         this.priceCurrency = "VND";
     }
 
-    // Getters and setters (same as Product.java, omitted for brevity)
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public String getProductUrl() { return productUrl; }
@@ -47,7 +46,6 @@ public abstract class AbstractProduct {
     public void addCategoryData(String category, Object value) { this.categoryData.put(category, value); }
 
     public void organizeSpecificationsIntoCategories() {
-        // Same as Product.java
         Map<String, Object> techSpecs = new HashMap<>();
         Map<String, Object> displayInfo = new HashMap<>();
         Map<String, Object> cameraInfo = new HashMap<>();

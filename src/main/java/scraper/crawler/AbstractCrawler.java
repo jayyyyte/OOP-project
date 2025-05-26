@@ -123,91 +123,7 @@ public abstract class AbstractCrawler implements Crawler {
                     Map<String, String> specs = new HashMap<>();
                     boolean specsFound = false;
 
-                    // APPROACH 1: Try to click "Xem cấu hình chi tiết" button and extract from expanded section
-                    // APPROACH 2: Extract specifications from tables
-                    // APPROACH 3: Look for alternate specs format (non-table formats)
-/*                    try {
-                        System.out.println("Looking for specifications button...");
-                        // Attempt to find and click on the specifications button with all possible selectors
-                        List<WebElement> specsButtons = driver.findElements(By.cssSelector(config.getSpecsButton()));
-
-                        boolean buttonClicked = false;
-                        for (WebElement button : specsButtons) {
-                            try {
-                                if (button.isDisplayed() &&
-                                        (button.getText().toLowerCase().contains("cấu hình") ||
-                                                button.getText().toLowerCase().contains("thông số") ||
-                                                button.getDomAttribute("textContent").toLowerCase().contains("cấu hình"))) {
-
-                                    System.out.println("Found specs button: " + button.getText());
-                                    // Scroll to the button
-                                    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", button);
-                                    Thread.sleep(300);
-
-                                    // Try clicking normally first
-                                    try {
-                                        button.click();
-                                        buttonClicked = true;
-                                        System.out.println("Clicked specifications button");
-                                    } catch (Exception e) {
-                                        // If normal click fails, try JavaScript click
-                                        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", button);
-                                        buttonClicked = true;
-                                        System.out.println("Clicked specifications button via JavaScript");
-                                    }
-
-                                    // Wait for specs to load
-                                    Thread.sleep(500);
-                                    break;
-                                }
-                            } catch (Exception e) {
-                                System.err.println("Error clicking a specs button: " + e.getMessage());
-                            }
-                        }
-
-                        // If button not found or clicked, try JavaScript approach
-                        if (!buttonClicked) {
-                            System.out.println("Button not found/clicked normally, trying JavaScript approach");
-                            // Find a more generic button that might open specs
-                            List<WebElement> possibleButtons = driver.findElements(
-                                    By.xpath("//button[contains(text(), 'cấu hình') or contains(text(), 'thông số')] | " +
-                                            "//a[contains(text(), 'cấu hình') or contains(text(), 'thông số')]"));
-
-                            for (WebElement btn : possibleButtons) {
-                                try {
-                                    ((JavascriptExecutor) driver).executeScript("arguments[0].click();", btn);
-                                    buttonClicked = true;
-                                    System.out.println("Clicked button via JavaScript: " + btn.getText());
-                                    Thread.sleep(500);
-                                    break;
-                                } catch (Exception e) {
-                                    // Continue to next button
-                                }
-                            }
-                        }
-
-                        // If still no button found, look for elements with click handlers
-                        if (!buttonClicked) {
-                            System.out.println("No buttons found, looking for clickable elements with specs text");
-                            List<WebElement> possibleElements = driver.findElements(
-                                    By.xpath("//*[contains(text(), 'cấu hình chi tiết') or contains(text(), 'thông số kỹ thuật')]"));
-
-                            for (WebElement element : possibleElements) {
-                                try {
-                                    ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
-                                    System.out.println("Clicked element: " + element.getText());
-                                    Thread.sleep(500);
-                                    break;
-                                } catch (Exception e) {
-                                    // Continue to next element
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        System.err.println("Error finding/clicking specs button: " + e.getMessage());
-                    }
-
-                    // APPROACH 2: Extract specifications from tables
+                    // APPROACH 1: Extract specifications from tables
                     System.out.println("Looking for specification tables...");
                     try {
                         List<WebElement> specTables = driver.findElements(By.cssSelector(config.getSpecsTable()));
@@ -240,8 +156,8 @@ public abstract class AbstractCrawler implements Crawler {
                     } catch (Exception e) {
                         System.err.println("Error finding specification tables: " + e.getMessage());
                     }
-
-                /*    // APPROACH 3: Look for alternate specs format (non-table formats)
+                /*
+                // APPROACH 2: Look for alternate specs format (non-table formats)
                     if (!specsFound) {
                         System.out.println("Table approach failed, trying alternative specs format...");
                         try {
@@ -273,9 +189,8 @@ public abstract class AbstractCrawler implements Crawler {
                     }
                 */
 
-                    // APPROACH 4: Try to find specs directly in the HTML
+                    // APPROACH 3: Try to find specs directly in the HTML
                     if (!specsFound) {
-                        System.out.println("Previous approaches failed, trying direct HTML inspection...");
                         try {
                             // Get the page source
                             String pageSource = driver.getPageSource();
@@ -298,9 +213,8 @@ public abstract class AbstractCrawler implements Crawler {
                         }
                     }
 
-                    // APPROACH 5: Look for specification elements by their text content
+                    // APPROACH 4: Look for specification elements by their text content
                     if (!specsFound) {
-                        System.out.println("Trying to find specs by text content...");
                         try {
                             // Look for common spec categories in Vietnamese phones
                             String[] specCategories = {
@@ -347,7 +261,7 @@ public abstract class AbstractCrawler implements Crawler {
                         }
                     }
 
-                    // APPROACH 6: Try to extract using JavaScript
+                    // APPROACH 5: Try to extract using JavaScript
                     if (!specsFound) {
                         System.out.println("Trying JavaScript approach...");
                         try {
@@ -389,8 +303,8 @@ public abstract class AbstractCrawler implements Crawler {
                     product.setSpecifications(specs);
                     product.organizeSpecificationsIntoCategories();
 
-                    // RATING
 
+                    // RATING
                     boolean ratingFound = false;
 
                     // Approach 1: Direct rating display like "4.0/5"
@@ -482,7 +396,8 @@ public abstract class AbstractCrawler implements Crawler {
              
                         }
                     }
-// REVIEWS COUNT
+
+                    // REVIEWS COUNT
                     boolean reviewCountFound = false;
 
                     // Approach 1: Try direct selectors

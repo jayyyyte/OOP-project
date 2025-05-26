@@ -1,4 +1,4 @@
-package model;
+package service.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 public class Product {
-    private int id;
-    private String name;
-    private double price;
-    private String description;
-    private Map<String, String> structuredData; // Dữ liệu cấu trúc: RAM, camera,...
-    private List<Review> reviews;
+    final private int id;
+    final private String name;
+    final private double price;
+    final private String description;
+    final private Map<String, String> structuredData;
+    final private List<Review> reviews;
 
     public Product(int id, String name, double price, String description) {
         this.id = id;
@@ -22,7 +22,6 @@ public class Product {
         this.reviews = new ArrayList<>();
     }
 
-    // Getters và Setters
     public int getId() { return id; }
     public String getName() { return name; }
     public double getPrice() { return price; }

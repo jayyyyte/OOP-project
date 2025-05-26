@@ -18,7 +18,7 @@ public class PriceRangeFilterEngine extends SearchEngine {
 
     @Override
     public List<JSONObject> search(Map<String, Object> criteria) {
-        // Nếu không có đầy đủ minPrice và maxPrice, trả về toàn bộ data
+        // Nếu không có đầy đủ minPrice và maxPrice => trả về toàn bộ data
         if (criteria == null
             || !criteria.containsKey(CRITERIA_MIN_PRICE)
             || !criteria.containsKey(CRITERIA_MAX_PRICE)) {

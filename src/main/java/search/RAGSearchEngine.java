@@ -1,6 +1,5 @@
 package search;
 
-import filter.*;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,9 +57,13 @@ public class RAGSearchEngine extends SearchEngine {
             returnFields.put("description");
             returnFields.put("price");
             returnFields.put("productUrl");
-            returnFields.put("specifications");
+            returnFields.put("Spec_1");
+            returnFields.put("Spec_2");
+            returnFields.put("Spec_3");
+            returnFields.put("Spec_4");
             returnFields.put("overallRating");
             returnFields.put("categoryData");
+            returnFields.put("imageUrl");
             requestBody.put("fields", returnFields);
 
             // Create the HTTP request with the specific namespace
@@ -154,10 +157,20 @@ public class RAGSearchEngine extends SearchEngine {
                             product.put("description", hitFields.optString("description", ""));
                             product.put("price", hitFields.optDouble("price", 0.0));
                             product.put("productUrl", hitFields.optString("productUrl", ""));
+                            product.put("imageUrl", hitFields.optString("imageUrl", ""));
                             
                             // Add specifications if available
-                            if (hitFields.has("specifications")) {
-                                product.put("specifications", hitFields.get("specifications"));
+                            if (hitFields.has("Spec_1")) {
+                                product.put("Spec_1", hitFields.get("Spec_1"));
+                            }
+                            if (hitFields.has("Spec_2")) {
+                                product.put("Spec_2", hitFields.get("Spec_2"));
+                            }
+                            if (hitFields.has("Spec_3")) {
+                                product.put("Spec_3", hitFields.get("Spec_3"));
+                            }
+                            if (hitFields.has("Spec_4")) {
+                                product.put("Spec_4", hitFields.get("Spec_4"));
                             }
                             
                             // Add category data if available
@@ -192,17 +205,5 @@ public class RAGSearchEngine extends SearchEngine {
             e.printStackTrace();
             return new ArrayList<>();
         }
-    }
-
-    // This method should be implemented to get embeddings for the query
-    // You can use a local model or call an embedding API
-    private List<Float> getQueryEmbedding(String query) {
-        // TODO: Implement query embedding
-        // For now, return a dummy embedding
-        List<Float> dummyEmbedding = new ArrayList<>();
-        for (int i = 0; i < 1536; i++) { // Assuming 1536-dimensional embeddings
-            dummyEmbedding.add(0.0f);
-        }
-        return dummyEmbedding;
     }
 } 

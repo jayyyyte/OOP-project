@@ -18,7 +18,7 @@ public class KeywordSearchEngine extends SearchEngine {
 
     @Override
     public List<JSONObject> search(Map<String, Object> criteria) {
-        // Nếu không có criteria hoặc không chứa 'keyword', trả về toàn bộ data
+        // Nếu không có criteria hoặc không chứa 'keyword' => trả về toàn bộ data
         if (criteria == null || !criteria.containsKey(CRITERIA_KEYWORD)) {
             return data;
         }

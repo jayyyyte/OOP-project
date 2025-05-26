@@ -6,20 +6,20 @@ import filter.KeywordSearchEngine;
 import filter.PriceRangeFilterEngine;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Lớp này đóng gói toàn bộ logic tìm kiếm và các bộ lọc
- * cho một loại sản phẩm cụ thể (ví dụ: Điện thoại, Laptop).
- * Nó chứa các SearchEngine và các cấu hình riêng biệt (như ngưỡng giá rẻ, pin trâu, hãng)
- * cho loại sản phẩm đó.
- */
+/*
+    encapsulate all search logics and filters for a type of product
+    (include SearchEngine and separate specs for that product type)
+*/
 public class ProductSearcher {
     private final BatterySearchEngine batterySearchEngine;
     private final KeywordSearchEngine keywordSearchEngine;
@@ -32,23 +32,18 @@ public class ProductSearcher {
     private final double maxCheapPrice;
     private final int minStrongBattery;
 
-    /**
-     * Khởi tạo một ProductSearcher cho một loại sản phẩm.
-     *
-     * @param dataSource Đường dẫn đến file JSON chứa dữ liệu sản phẩm.
-     * @param supportedBrandsKeywords Tập hợp các từ khóa hãng hỗ trợ cho loại sản phẩm này.
-     * @param generalProductTypeKeywords Tập hợp các từ khóa chung chỉ loại sản phẩm này (ví dụ: "điện thoại", "laptop").
-     * @param maxCheapPrice Ngưỡng giá tối đa để coi là "giá rẻ" cho loại sản phẩm này.
-     * @param minStrongBattery Ngưỡng pin tối thiểu để coi là "pin trâu" cho loại sản phẩm này.
-     * @throws IOException Nếu có lỗi khi đọc file dữ liệu.
-     * @throws JSONException Nếu có lỗi khi phân tích cú pháp JSON.
+    private final String jsonFilePath;
+    private final List<JSONObject> products = new ArrayList<>();
+
+    /*
+       Init a ProductSearcher for a product type
      */
     public ProductSearcher(String dataSource,
-                           Set<String> supportedBrandsKeywords,
-                           Set<String> generalProductTypeKeywords,
-                           double maxCheapPrice,
-                           int minStrongBattery) throws IOException, JSONException {
-        // Khởi tạo tất cả các engine với dataSource cụ thể cho loại sản phẩm này
+                         Set<String> supportedBrandsKeywords,
+                         Set<String> generalProductTypeKeywords,
+                         double maxCheapPrice,
+                         int minStrongBattery) throws IOException, JSONException {
+        // Init all engines with datasource for the product type
         this.batterySearchEngine = new BatterySearchEngine(dataSource);
         this.keywordSearchEngine = new KeywordSearchEngine(dataSource);
         this.priceRangeFilterEngine = new PriceRangeFilterEngine(dataSource);
@@ -58,16 +53,29 @@ public class ProductSearcher {
         this.generalProductTypeKeywords = generalProductTypeKeywords;
         this.maxCheapPrice = maxCheapPrice;
         this.minStrongBattery = minStrongBattery;
+        this.jsonFilePath = dataSource;
+
+        loadProducts();
     }
 
-    /**
-     * Thực hiện tìm kiếm sản phẩm dựa trên truy vấn người dùng.
-     * Logic này được điều chỉnh để ưu tiên các bộ lọc chuyên biệt
-     * và bỏ qua các từ khóa loại sản phẩm chung khi có bộ lọc khác được kích hoạt.
-     *
-     * @param query Chuỗi truy vấn từ người dùng.
-     * @return Danh sách các JSONObject biểu thị sản phẩm khớp với truy vấn.
-     */
+   // Load products' data from JSON files
+    private void loadProducts() {
+        try {
+            InputStream is = getClass().getResourceAsStream(jsonFilePath);
+            if (is == null) {
+                throw new IOException("Could not find resource: " + jsonFilePath);
+            }
+            String content = new String(is.readAllBytes());
+            JSONArray jsonArray = new JSONArray(content);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                products.add(jsonArray.getJSONObject(i));
+            }
+        } catch (IOException | JSONException e) {
+            System.err.println("Error loading products from " + jsonFilePath + ": " + e.getMessage());
+        }
+    }
+
+    // implement search logic
     public List<JSONObject> search(String query) {
         String lowerCaseQuery = query.toLowerCase();
 
@@ -87,10 +95,8 @@ public class ProductSearcher {
         }
         boolean lookingForBrand = detectedBrandKeyword != null;
 
-        // Biến cờ để kiểm tra xem có bất kỳ bộ lọc đặc biệt nào được kích hoạt không
         boolean anySpecialFilterActive = lookingForCheap || lookingForBattery || lookingForBrand;
 
-        // Chuẩn bị remainingKeywords
         String remainingKeywords = lowerCaseQuery;
         if (lookingForCheap) {
             remainingKeywords = remainingKeywords.replace("giá rẻ", "");
@@ -102,7 +108,6 @@ public class ProductSearcher {
             remainingKeywords = remainingKeywords.replace(detectedBrandKeyword, "");
         }
 
-        // Loại bỏ tất cả các từ khóa loại sản phẩm chung nếu có bất kỳ bộ lọc đặc biệt nào được kích hoạt
         if (anySpecialFilterActive) {
             for (String generalKeyword : generalProductTypeKeywords) {
                 remainingKeywords = remainingKeywords.replace(generalKeyword, "");
@@ -112,7 +117,7 @@ public class ProductSearcher {
 
         List<List<JSONObject>> listsToCombine = new ArrayList<>();
 
-        // Case 1: KHÔNG CÓ bất kỳ tiêu chí đặc biệt nào được phát hiện.
+        // Case 1: no criteria found
         // Dựa hoàn toàn vào KeywordSearchEngine với query gốc.
         if (!anySpecialFilterActive) {
             if (query.trim().isEmpty()) {
@@ -122,16 +127,15 @@ public class ProductSearcher {
             return keywordSearchEngine.search(keywordCriteria);
         }
 
-        // Case 2: CÓ ÍT NHẤT MỘT tiêu chí đặc biệt được phát hiện.
+        // Case 2: at least 1 criteria found
         // Ưu tiên các bộ lọc chuyên biệt.
-        
         if (lookingForCheap) {
             Map<String, Object> priceCriteria = Map.of("minPrice", 0.0, "maxPrice", this.maxCheapPrice);
             List<JSONObject> priceFilteredList = priceRangeFilterEngine.search(priceCriteria);
             if (priceFilteredList != null && !priceFilteredList.isEmpty()) {
                 listsToCombine.add(priceFilteredList);
             } else {
-                return new ArrayList<>(); // Không có sản phẩm giá rẻ nào, trả về rỗng ngay
+                return new ArrayList<>(); // no cheap product -> return null
             }
         }
 
@@ -141,7 +145,7 @@ public class ProductSearcher {
             if (batteryFilteredList != null && !batteryFilteredList.isEmpty()) {
                 listsToCombine.add(batteryFilteredList);
             } else {
-                return new ArrayList<>(); // Không có sản phẩm pin trâu nào, trả về rỗng ngay
+                return new ArrayList<>(); // no strong battery -> return null
             }
         }
 
@@ -151,11 +155,11 @@ public class ProductSearcher {
             if (brandFilteredList != null && !brandFilteredList.isEmpty()) {
                 listsToCombine.add(brandFilteredList);
             } else {
-                return new ArrayList<>(); // Không có sản phẩm của hãng đó, trả về rỗng ngay
+                return new ArrayList<>(); // no brand -> return null
             }
         }
 
-        // Chỉ gọi KeywordSearchEngine nếu remainingKeywords KHÔNG rỗng
+        // only call KeywordSearchEngine if remainingKeywords not null
         // (và nó đã được làm sạch các từ khóa loại sản phẩm chung nếu có bộ lọc đặc biệt).
         if (!remainingKeywords.isEmpty()) {
             Map<String, Object> keywordCriteria = Map.of("keyword", remainingKeywords);
@@ -163,7 +167,6 @@ public class ProductSearcher {
             if (keywordResults != null && !keywordResults.isEmpty()) {
                 listsToCombine.add(keywordResults);
             } else {
-                // Nếu có từ khóa chung quan trọng nhưng không tìm thấy sản phẩm nào khớp, trả về rỗng
                 return new ArrayList<>();
             }
         }
@@ -185,14 +188,7 @@ public class ProductSearcher {
         return finalResults;
     }
 
-    /**
-     * Hàm trợ giúp để tính phép giao của hai danh sách các JSONObject.
-     * So sánh dựa trên "productUrl" để xác định các sản phẩm trùng lặp.
-     *
-     * @param list1 Danh sách JSONObject thứ nhất.
-     * @param list2 Danh sách JSONObject thứ hai.
-     * @return Một danh sách mới chứa các JSONObject có mặt trong cả hai danh sách đầu vào.
-     */
+    //Hàm trợ giúp để tính phép giao của hai danh sách các JSONObject
     private List<JSONObject> intersectLists(List<JSONObject> list1, List<JSONObject> list2) {
         if (list1 == null || list2 == null || list1.isEmpty() || list2.isEmpty()) {
             return new ArrayList<>();
@@ -213,11 +209,6 @@ public class ProductSearcher {
         return result;
     }
 
-    /**
-     * In kết quả tìm kiếm ra console.
-     *
-     * @param results Danh sách các JSONObject để in.
-     */
     public void printResults(List<JSONObject> results) {
         if (results.isEmpty()) {
             System.out.println("Không tìm thấy sản phẩm nào phù hợp với yêu cầu của bạn.");

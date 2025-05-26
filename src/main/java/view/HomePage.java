@@ -25,6 +25,7 @@ import javax.json.JsonReader;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import util.ImageCache;
 
 public class HomePage {
@@ -49,17 +50,8 @@ public class HomePage {
         }
     }
 
-    private final BannerItem[] bannerItems = {
-        new BannerItem("📱", "Thu cu doi moi - Giam den 3 trieu"),
-        new BannerItem("🚚", "Mien phi van chuyen toan quoc"),
-        new BannerItem("✅", "San pham chinh hang 100%"),
-        new BannerItem("✅", "Tang qua khi mua online"),
-        new BannerItem("✅", "Sale soc - Giam den 50%"),
-        new BannerItem("✅", "Bao hanh chinh hang 12 thang")
-    };
-
     // Define a Product class to match the JSON structure
-    private class Product {
+    public static class Product {
         String name;
         String productUrl;
         String imageUrl;
@@ -67,14 +59,25 @@ public class HomePage {
         String priceCurrency;
         double overallRating;
         int reviewCount;
-        // Add other fields as necessary
+        String description;
+        List<Review> reviews;
+        Map<String, String> specifications;
+
+        // Define a Review class
+        public static class Review {
+            String author;
+            String content;
+
+            // Constructor for Review
+            public Review(String author, String content) {
+                this.author = author;
+                this.content = content;
+            }
+        }
     }
 
     public Scene createScene() {
         VBox root = new VBox(0);
-
-        // Top banner
-        HBox topBanner = createTopBanner();
 
         // Navigation bar
         HBox navbar = createNavigationBar();
@@ -83,7 +86,7 @@ public class HomePage {
         BorderPane mainContent = createMainContent();
 
         // Add all components to root
-        root.getChildren().addAll(topBanner, navbar, mainContent);
+        root.getChildren().addAll(navbar, mainContent);
 
         // Get screen dimensions
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
@@ -103,37 +106,8 @@ public class HomePage {
                 Router.getStage().setFullScreen(!Router.getStage().isFullScreen());
             }
         });
-
-        startBannerAnimation();
+        
         return scene;
-    }
-
-    private void startBannerAnimation() {
-        bannerTimeline = new Timeline(
-            new KeyFrame(Duration.seconds(4), e -> nextBanner())
-        );
-        bannerTimeline.setCycleCount(Timeline.INDEFINITE);
-        bannerTimeline.play();
-    }
-
-    private void nextBanner() {
-        currentBannerIndex = (currentBannerIndex + 1) % bannerItems.length;
-        updateBannerContent();
-    }
-
-    private void previousBanner() {
-        currentBannerIndex = (currentBannerIndex - 1 + bannerItems.length) % bannerItems.length;
-        updateBannerContent();
-    }
-
-    private void updateBannerContent() {
-        for (int i = 0; i < 3; i++) {
-            int itemIndex = (currentBannerIndex + i) % bannerItems.length;
-            BannerItem item = bannerItems[itemIndex];
-            
-            iconLabels[i].setText(item.icon);
-            textLabels[i].setText(item.text);
-        }
     }
 
     private void toggleTheme() {
@@ -162,71 +136,6 @@ public class HomePage {
         }
     }
 
-    private HBox createTopBanner() {
-        HBox banner = new HBox();
-        banner.getStyleClass().add("top-banner");
-        banner.setAlignment(Pos.CENTER);
-        banner.setPadding(new Insets(10));
-        banner.setSpacing(15); // Add spacing between elements
-
-        // Left arrow
-        Button prevButton = new Button("<");
-        prevButton.getStyleClass().add("banner-nav-button");
-        prevButton.setOnAction(e -> {
-            bannerTimeline.pause();
-            previousBanner();
-            bannerTimeline.play();
-        });
-
-        // Create container for 3 banner items
-        bannerContainer = new HBox(30); // Space between items
-        bannerContainer.setAlignment(Pos.CENTER);
-
-        // Create 3 content boxes for items
-        HBox[] contentBoxes = new HBox[3];
-        iconLabels = new Label[3];
-        textLabels = new Label[3];
-
-        for (int i = 0; i < 3; i++) {
-            contentBoxes[i] = new HBox(10);
-            contentBoxes[i].setAlignment(Pos.CENTER);
-            
-            iconLabels[i] = new Label(bannerItems[i].icon);
-            iconLabels[i].getStyleClass().add("banner-icon");
-            
-            textLabels[i] = new Label(bannerItems[i].text);
-            textLabels[i].getStyleClass().add("banner-label");
-            
-            contentBoxes[i].getChildren().addAll(iconLabels[i], textLabels[i]);
-            bannerContainer.getChildren().add(contentBoxes[i]);
-        }
-
-        // Right arrow
-        Button nextButton = new Button(">");
-        nextButton.getStyleClass().add("banner-nav-button");
-        nextButton.setOnAction(e -> {
-            bannerTimeline.pause();
-            nextBanner();
-            bannerTimeline.play();
-        });
-
-        // Add spacers for centering
-        Region leftSpacer = new Region();
-        Region rightSpacer = new Region();
-        HBox.setHgrow(leftSpacer, Priority.ALWAYS);
-        HBox.setHgrow(rightSpacer, Priority.ALWAYS);
-
-        banner.getChildren().addAll(
-            leftSpacer,
-            prevButton,
-            bannerContainer,
-            nextButton,
-            rightSpacer
-        );
-
-        return banner;
-    }
-
     private HBox createNavigationBar() {
         HBox navbar = new HBox(20);
         navbar.getStyleClass().add("nav-bar");
@@ -235,6 +144,10 @@ public class HomePage {
         // Logo
         Label logo = new Label("CellphoneS");
         logo.getStyleClass().add("logo");
+
+        // Add small spacer after logo
+        Region logoSpacer = new Region();
+        logoSpacer.setPrefWidth(40);
 
         // Search bar
         HBox searchContainer = new HBox(5);
@@ -245,8 +158,13 @@ public class HomePage {
         categoryComboBox.setValue("Smartphones"); // Default value
         categoryComboBox.getStyleClass().add("search-category");
         
+        ComboBox<String> searchTypeComboBox = new ComboBox<>();
+        searchTypeComboBox.getItems().addAll("RAG Search", "Basic Search");
+        searchTypeComboBox.setValue("RAG Search"); // Default value
+        searchTypeComboBox.getStyleClass().add("search-category");
+        
         TextField searchField = new TextField();
-        searchField.setPromptText("Ban can tim gi?");
+        searchField.setPromptText("Bạn cần tìm gì?");
         searchField.setPrefWidth(400);
         searchField.getStyleClass().add("search-field");
         
@@ -255,26 +173,19 @@ public class HomePage {
             String query = searchField.getText().trim();
             if (!query.isEmpty()) {
                 String selectedCategory = categoryComboBox.getValue();
+                String searchType = searchTypeComboBox.getValue();
                 String jsonFile = selectedCategory.equals("Smartphones") ? "smartphones.json" : "laptops.json";
-                Router.navigateTo(new SearchResultsPage(query, jsonFile).createScene());
+                Router.navigateTo(new SearchResultsPage(query, jsonFile, searchType).createScene());
             }
         });
         
-        searchContainer.getChildren().addAll(categoryComboBox, searchField);
+        searchContainer.getChildren().addAll(categoryComboBox, searchTypeComboBox, searchField);
         
         // Navigation buttons
-        Button categoryBtn = new Button("Danh muc");
-        Button locationBtn = new Button("Dia diem");
-        Button cartBtn = new Button("Gio hang");
-        Button orderBtn = new Button("Tra cuu don hang");
-        Button loginBtn = new Button("Dang nhap");
+        Button cartBtn = new Button("Giỏ hàng");
         Button themeBtn = new Button("Toggle Theme");
         
-        categoryBtn.getStyleClass().add("nav-button-light");
-        locationBtn.getStyleClass().add("nav-button-light");
         cartBtn.getStyleClass().add("nav-button");
-        orderBtn.getStyleClass().add("nav-button");
-        loginBtn.getStyleClass().add("nav-button");
         themeBtn.getStyleClass().add("nav-button");
         
         cartBtn.setOnAction(e -> {
@@ -286,14 +197,11 @@ public class HomePage {
         HBox.setHgrow(spacer, Priority.ALWAYS);
         
         navbar.getChildren().addAll(
-            logo, 
-            categoryBtn,    
-            locationBtn,    
+            logo,
+            logoSpacer, // Add the spacer here
             searchContainer, 
             spacer, 
             cartBtn, 
-            orderBtn, 
-            loginBtn, 
             themeBtn
         );
         return navbar;
@@ -308,12 +216,8 @@ public class HomePage {
             
         // Category data with names and image paths
         String[][] categories = {
-            {"Dien thoai, Tablet", "/images/phone_icon.png"},
-            {"Laptop", "/images/laptop_icon.png"},
-            {"Am thanh, Mic thu am", "/images/headphones_icon.png"},
-            {"Dong ho, Camera", "/images/smartwatch_icon.png"},
-            {"Phu kien", "/images/usb_icon.png"},
-            {"PC, Man hinh, May in", "/images/pc_icon.png"}
+            {"Smartphones", "/images/phone_icon.png"},
+            {"Laptops", "/images/laptop_icon.png"}
         };
         
         for (String[] category : categories) {
@@ -330,7 +234,7 @@ public class HomePage {
                 // Create button with text and icon
                 Button btn = new Button(category[0]);
                 btn.setGraphic(icon);
-                btn.setGraphicTextGap(10);  // Space between icon and text
+                btn.setGraphicTextGap(10);
                 btn.getStyleClass().add("category-button");
                 
                 // Make button fill width of sidebar
@@ -399,11 +303,11 @@ public class HomePage {
         featuredProducts.setAlignment(Pos.CENTER);
         
         String[][] products = {
-            {"IPHONE 16 PRO MAX", "Len doi ngay"},
-            {"OPPO FIND N5", "Dat gach ngay"},
-            {"REDMI NOTE 14 5G", "Uu dai tot chot ngay"},
-            {"GALAXY S25 ULTRA", "Gia tot chot ngay"},
-            {"VIVO Y04", "Gia chi tu 2.99 trieu"}
+            {"IPHONE 16 PRO MAX", "Lên đời ngay"},
+            {"OPPO FIND N5", "Đặt gạch ngay"},
+            {"REDMI NOTE 14 5G", "Ưu đãi tốt chốt ngay"},
+            {"GALAXY S25 ULTRA", "Giá tốt chốt ngay"},
+            {"VIVO Y04", "Giá chỉ từ 2.99 trieu"}
         };
         
         for (String[] product : products) {
@@ -452,7 +356,8 @@ public class HomePage {
         List<Product> products = new ArrayList<>();
         List<String> imageUrls = new ArrayList<>();
         
-        try (InputStream is = getClass().getResourceAsStream("/products.json");
+        // Load products from smartphones.json
+        try (InputStream is = getClass().getResourceAsStream("/smartphones.json");
              JsonReader reader = Json.createReader(is)) {
 
             JsonArray jsonArray = reader.readArray();
@@ -465,6 +370,35 @@ public class HomePage {
                 product.priceCurrency = jsonObject.getString("priceCurrency", "");
                 product.overallRating = jsonObject.getJsonNumber("overallRating").doubleValue();
                 product.reviewCount = jsonObject.getInt("reviewCount", 0);
+                
+                // Load description (assuming it's a String in JSON)
+                product.description = jsonObject.getString("description", null);
+
+                // Parse specifications
+                if (jsonObject.containsKey("specifications")) {
+                    product.specifications = new java.util.LinkedHashMap<>();
+                    javax.json.JsonObject specsObj = jsonObject.getJsonObject("specifications");
+                    for (String key : specsObj.keySet()) {
+                        product.specifications.put(key, specsObj.getString(key, ""));
+                    }
+                }
+
+                // Load reviews (assuming it's nested within categoryData) - Need to handle potential null/missing keys
+                product.reviews = new ArrayList<>();
+                if (jsonObject.containsKey("categoryData")) {
+                    JsonObject categoryDataObject = jsonObject.getJsonObject("categoryData");
+                    if (categoryDataObject != null && categoryDataObject.containsKey("reviews")) {
+                        JsonArray reviewsArray = categoryDataObject.getJsonArray("reviews");
+                        if (reviewsArray != null) {
+                            for (JsonObject reviewObject : reviewsArray.getValuesAs(JsonObject.class)) {
+                                String author = reviewObject.getString("author", "");
+                                String content = reviewObject.getString("content", "");
+                                product.reviews.add(new Product.Review(author, content));
+                            }
+                        }
+                    }
+                }
+
                 products.add(product);
                 
                 // Debug log
@@ -472,14 +406,70 @@ public class HomePage {
                 imageUrls.add(product.imageUrl);
             }
             
-            // Preload all images
-            System.out.println("Preloading " + imageUrls.size() + " images...");
-            ImageCache.preloadImages(imageUrls);
-            
         } catch (Exception e) {
-            System.err.println("Error loading products: " + e.getMessage());
+            System.err.println("Error loading products from smartphones.json: " + e.getMessage());
             e.printStackTrace();
         }
+
+        // Load products from laptops.json
+        try (InputStream is = getClass().getResourceAsStream("/laptops.json");
+             JsonReader reader = Json.createReader(is)) {
+
+            JsonArray jsonArray = reader.readArray();
+            for (JsonObject jsonObject : jsonArray.getValuesAs(JsonObject.class)) {
+                Product product = new Product();
+                product.name = jsonObject.getString("name", "");
+                product.productUrl = jsonObject.getString("productUrl", "");
+                product.imageUrl = jsonObject.getString("imageUrl", "");
+                product.price = jsonObject.getJsonNumber("price").doubleValue();
+                product.priceCurrency = jsonObject.getString("priceCurrency", "");
+                product.overallRating = jsonObject.getJsonNumber("overallRating").doubleValue();
+                product.reviewCount = jsonObject.getInt("reviewCount", 0);
+                
+                // Load description (assuming it's a String in JSON)
+                product.description = jsonObject.getString("description", null);
+
+                // Parse specifications
+                if (jsonObject.containsKey("specifications")) {
+                    product.specifications = new java.util.LinkedHashMap<>();
+                    javax.json.JsonObject specsObj = jsonObject.getJsonObject("specifications");
+                    for (String key : specsObj.keySet()) {
+                        product.specifications.put(key, specsObj.getString(key, ""));
+                    }
+                }
+
+                // Load reviews (assuming it's nested within categoryData) - Need to handle potential null/missing keys
+                product.reviews = new ArrayList<>();
+                if (jsonObject.containsKey("categoryData")) {
+                    JsonObject categoryDataObject = jsonObject.getJsonObject("categoryData");
+                    if (categoryDataObject != null && categoryDataObject.containsKey("reviews")) {
+                        JsonArray reviewsArray = categoryDataObject.getJsonArray("reviews");
+                        if (reviewsArray != null) {
+                            for (JsonObject reviewObject : reviewsArray.getValuesAs(JsonObject.class)) {
+                                String author = reviewObject.getString("author", "");
+                                String content = reviewObject.getString("content", "");
+                                product.reviews.add(new Product.Review(author, content));
+                            }
+                        }
+                    }
+                }
+
+                products.add(product);
+                
+                // Debug log
+                System.out.println("Found product image URL: " + product.imageUrl);
+                imageUrls.add(product.imageUrl);
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error loading products from laptops.json: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        // Preload all images
+        System.out.println("Preloading " + imageUrls.size() + " images...");
+        ImageCache.preloadImages(imageUrls);
+        
         return products;
     }
 
@@ -493,39 +483,20 @@ public class HomePage {
         
         for (int i = 0; i < products.size(); i++) {
             Product product = products.get(i);
-            VBox productCard = createProductCard(
-                product.name, // name
-                String.format("%,.0f %s", product.price*1000, product.priceCurrency), // current price
-                "",  // Assuming no original price in JSON
-                "0",  // Assuming no discount percentage in JSON
-                product.imageUrl  // Use the same test image for all products
-            );
+            VBox productCard = createProductCard(product);
             grid.add(productCard, i % 5, i / 5);
         }
         
         return grid;
     }
 
-    private VBox createProductCard(String name, String currentPrice, String originalPrice, String discountPercent, String imagePath) {
+    private VBox createProductCard(Product product) {
         VBox card = new VBox(10);
         card.setPadding(new Insets(15));
         card.setMinWidth(250);
         card.setMaxWidth(250);
         card.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 5;");
-        
-        HBox topRow = new HBox();
-        topRow.setAlignment(Pos.CENTER_LEFT);
 
-        Label discountLabel = new Label("Giam " + discountPercent + "%");
-        discountLabel.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 3;");
-        
-        Label installmentLabel = new Label("Tra gop 0%");
-        installmentLabel.setStyle("-fx-background-color: white; -fx-text-fill: #0066cc; -fx-padding: 5 10; -fx-border-color: #0066cc; -fx-border-radius: 3;");
-        installmentLabel.setTranslateX(30);
-        
-        topRow.getChildren().addAll(discountLabel, installmentLabel);
-        card.getChildren().add(topRow);
-        
         // Product image
         StackPane imageContainer = new StackPane();
         imageContainer.setPrefHeight(200);
@@ -539,9 +510,9 @@ public class HomePage {
         card.getChildren().add(imageContainer);
         
         // Load image asynchronously
-        ImageCache.getImage(imagePath).thenAccept(image -> {
+        ImageCache.getImage(product.imageUrl).thenAccept(image -> {
             if (image != null) {
-                System.out.println("Successfully loaded image: " + imagePath);
+                System.out.println("Successfully loaded image: " + product.imageUrl);
                 javafx.application.Platform.runLater(() -> {
                     try {
                         ImageView imageView = new ImageView(image);
@@ -550,7 +521,7 @@ public class HomePage {
                         imageView.setPreserveRatio(true);
                         
                         if (imageView.getImage().isError()) {
-                            throw new Exception("Failed to load image: " + imagePath);
+                            throw new Exception("Failed to load image: " + product.imageUrl);
                         }
                         
                         imageContainer.getChildren().clear();
@@ -564,7 +535,7 @@ public class HomePage {
                     }
                 });
             } else {
-                System.err.println("Failed to load image: " + imagePath);
+                System.err.println("Failed to load image: " + product.imageUrl);
                 javafx.application.Platform.runLater(() -> {
                     imageContainer.getChildren().clear();
                     Label errorLabel = new Label("Image not availableeeeee");
@@ -575,37 +546,26 @@ public class HomePage {
         });
         
         // Product name
-        Label nameLabel = new Label(name);
+        Label nameLabel = new Label(product.name);
         nameLabel.setWrapText(true);
         nameLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: bold;");
+        nameLabel.setPrefHeight(35);
         card.getChildren().add(nameLabel);
         
         // Price information
         HBox priceBox = new HBox(10);
         priceBox.setAlignment(Pos.CENTER_LEFT);
         
-        Label currentPriceLabel = new Label(currentPrice);
+        Label currentPriceLabel = new Label(String.format("%,.0f %s", product.price*1000, product.priceCurrency));
         currentPriceLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: red;");
         priceBox.getChildren().add(currentPriceLabel);
-        
-        if (!originalPrice.isEmpty()) {
-            Label originalPriceLabel = new Label(originalPrice);
-            originalPriceLabel.setStyle("-fx-strikethrough: true; -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: gray;");
-            priceBox.getChildren().add(originalPriceLabel);
-        }
-        
         card.getChildren().add(priceBox);
         
-        // Additional benefits
-        Label benefitLabel = new Label("Smember giảm thêm đến 310.000đ");
-        benefitLabel.setFont(Font.font("System", 12));
-        card.getChildren().add(benefitLabel);
-        
-        // Rating and like button
+        // Rating and details button
         HBox bottomRow = new HBox();
         bottomRow.setAlignment(Pos.CENTER_LEFT);
         
-        // Stars rating
+        // Stars rating (hardcoded for now)
         HBox starsBox = new HBox(2);
         for (int i = 0; i < 5; i++) {
             Label star = new Label("★");
@@ -613,17 +573,14 @@ public class HomePage {
             starsBox.getChildren().add(star);
         }
         
-        Button likeButton = new Button("Yêu thích ♡");
-        likeButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #666;");
-        
         Button detailBtn = new Button("Chi tiết");
         detailBtn.setStyle("-fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 5;");
         detailBtn.setPrefWidth(100);
 
-        detailBtn.setOnAction(e -> Router.navigateTo(new ProductPage().createScene()));
+        detailBtn.setOnAction(e -> Router.navigateTo(new ProductPage(product).createScene()));
 
         HBox.setHgrow(starsBox, Priority.ALWAYS);
-        bottomRow.getChildren().addAll(starsBox, likeButton, detailBtn);
+        bottomRow.getChildren().addAll(starsBox, detailBtn);
         card.getChildren().add(bottomRow);
         
         return card;

@@ -15,7 +15,6 @@ public class Review {
         this.verifiedPurchase = verifiedPurchase;
     }
 
-    // Getters and setters
     public String getAuthor() { return author; }
     public void setAuthor(String author) { this.author = author; }
     public String getContent() { return content; }

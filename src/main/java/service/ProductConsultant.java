@@ -1,6 +1,6 @@
 package service;
 
-import model.Product;
+import service.model.Product;
 import search.SearchEngine;
 import org.json.JSONObject;
 

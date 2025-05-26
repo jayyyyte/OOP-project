@@ -1,4 +1,4 @@
-package model;
+package service.model;
 
 public class Review {
     private String userId;
