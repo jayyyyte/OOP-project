@@ -25,6 +25,7 @@ import javax.json.JsonReader;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import util.ImageCache;
 
 public class HomePage {
@@ -60,6 +61,7 @@ public class HomePage {
         int reviewCount;
         String description;
         List<Review> reviews;
+        Map<String, String> specifications;
 
         // Define a Review class
         public static class Review {
@@ -354,7 +356,8 @@ public class HomePage {
         List<Product> products = new ArrayList<>();
         List<String> imageUrls = new ArrayList<>();
         
-        try (InputStream is = getClass().getResourceAsStream("/products.json");
+        // Load products from smartphones.json
+        try (InputStream is = getClass().getResourceAsStream("/smartphones.json");
              JsonReader reader = Json.createReader(is)) {
 
             JsonArray jsonArray = reader.readArray();
@@ -370,6 +373,15 @@ public class HomePage {
                 
                 // Load description (assuming it's a String in JSON)
                 product.description = jsonObject.getString("description", null);
+
+                // Parse specifications
+                if (jsonObject.containsKey("specifications")) {
+                    product.specifications = new java.util.LinkedHashMap<>();
+                    javax.json.JsonObject specsObj = jsonObject.getJsonObject("specifications");
+                    for (String key : specsObj.keySet()) {
+                        product.specifications.put(key, specsObj.getString(key, ""));
+                    }
+                }
 
                 // Load reviews (assuming it's nested within categoryData) - Need to handle potential null/missing keys
                 product.reviews = new ArrayList<>();
@@ -394,14 +406,70 @@ public class HomePage {
                 imageUrls.add(product.imageUrl);
             }
             
-            // Preload all images
-            System.out.println("Preloading " + imageUrls.size() + " images...");
-            ImageCache.preloadImages(imageUrls);
-            
         } catch (Exception e) {
-            System.err.println("Error loading products: " + e.getMessage());
+            System.err.println("Error loading products from smartphones.json: " + e.getMessage());
             e.printStackTrace();
         }
+
+        // Load products from laptops.json
+        try (InputStream is = getClass().getResourceAsStream("/laptops.json");
+             JsonReader reader = Json.createReader(is)) {
+
+            JsonArray jsonArray = reader.readArray();
+            for (JsonObject jsonObject : jsonArray.getValuesAs(JsonObject.class)) {
+                Product product = new Product();
+                product.name = jsonObject.getString("name", "");
+                product.productUrl = jsonObject.getString("productUrl", "");
+                product.imageUrl = jsonObject.getString("imageUrl", "");
+                product.price = jsonObject.getJsonNumber("price").doubleValue();
+                product.priceCurrency = jsonObject.getString("priceCurrency", "");
+                product.overallRating = jsonObject.getJsonNumber("overallRating").doubleValue();
+                product.reviewCount = jsonObject.getInt("reviewCount", 0);
+                
+                // Load description (assuming it's a String in JSON)
+                product.description = jsonObject.getString("description", null);
+
+                // Parse specifications
+                if (jsonObject.containsKey("specifications")) {
+                    product.specifications = new java.util.LinkedHashMap<>();
+                    javax.json.JsonObject specsObj = jsonObject.getJsonObject("specifications");
+                    for (String key : specsObj.keySet()) {
+                        product.specifications.put(key, specsObj.getString(key, ""));
+                    }
+                }
+
+                // Load reviews (assuming it's nested within categoryData) - Need to handle potential null/missing keys
+                product.reviews = new ArrayList<>();
+                if (jsonObject.containsKey("categoryData")) {
+                    JsonObject categoryDataObject = jsonObject.getJsonObject("categoryData");
+                    if (categoryDataObject != null && categoryDataObject.containsKey("reviews")) {
+                        JsonArray reviewsArray = categoryDataObject.getJsonArray("reviews");
+                        if (reviewsArray != null) {
+                            for (JsonObject reviewObject : reviewsArray.getValuesAs(JsonObject.class)) {
+                                String author = reviewObject.getString("author", "");
+                                String content = reviewObject.getString("content", "");
+                                product.reviews.add(new Product.Review(author, content));
+                            }
+                        }
+                    }
+                }
+
+                products.add(product);
+                
+                // Debug log
+                System.out.println("Found product image URL: " + product.imageUrl);
+                imageUrls.add(product.imageUrl);
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error loading products from laptops.json: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        // Preload all images
+        System.out.println("Preloading " + imageUrls.size() + " images...");
+        ImageCache.preloadImages(imageUrls);
+        
         return products;
     }
 

@@ -197,26 +197,25 @@ public class ProductPage {
         
         VBox featureList = new VBox(15);
         
-        String[] features = {
-            "Màn hình Super Retina XDR 6,9 inch lớn hơn có viền mỏng hơn, đem đến cảm giác tuyệt vời khi cầm trên tay.",
-            "Điều khiển Camera - Chỉ cần trượt ngón tay để điều chỉnh camera giúp chụp ảnh hoặc quay video đẹp hoàn hảo và siêu nhanh.",
-            "iPhone 16 Pro Max có thiết kế titan cấp 5 với lớp hoàn thiện mới, tinh tế được xử lý bề mặt vi điểm.",
-            "iPhone 16 Pro Max được cài đặt sẵn hệ điều hành iOS 18, cho trải nghiệm người dùng mượt mà."
-        };
-        
-        for (String feature : features) {
-            HBox featureItem = new HBox(10);
-            
-            Label bullet = new Label("•");
-            bullet.setTextFill(Color.WHITE);
-            bullet.setFont(Font.font("System", FontWeight.BOLD, 16));
-            
-            Label featureText = new Label(feature);
-            featureText.setTextFill(Color.WHITE);
-            featureText.setWrapText(true);
-            
-            featureItem.getChildren().addAll(bullet, featureText);
-            featureList.getChildren().add(featureItem);
+        if (product.specifications != null && !product.specifications.isEmpty()) {
+            int count = 0;
+            for (java.util.Map.Entry<String, String> entry : product.specifications.entrySet()) {
+                if (count >= 4) break;
+                HBox featureItem = new HBox(10);
+                Label bullet = new Label("•");
+                bullet.setTextFill(Color.WHITE);
+                bullet.setFont(Font.font("System", FontWeight.BOLD, 16));
+                Label featureText = new Label(entry.getKey() + ": " + entry.getValue());
+                featureText.setTextFill(Color.WHITE);
+                featureText.setWrapText(true);
+                featureItem.getChildren().addAll(bullet, featureText);
+                featureList.getChildren().add(featureItem);
+                count++;
+            }
+        } else {
+            Label noSpecs = new Label("Không có thông số nổi bật.");
+            noSpecs.setTextFill(Color.WHITE);
+            featureList.getChildren().add(noSpecs);
         }
         
         featuresSection.getChildren().addAll(featureTitle, featureList);
@@ -228,8 +227,9 @@ public class ProductPage {
         descriptionSection.setPadding(new Insets(20));
         descriptionSection.setStyle("-fx-background-color: white; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 1);");
         descriptionSection.getStyleClass().add("description-section");
-        descriptionSection.setMaxWidth(1000);
-        
+        descriptionSection.setMinWidth(900);
+        descriptionSection.setMaxWidth(900);
+
         Label descriptionTitle = new Label("Mô tả sản phẩm");
         descriptionTitle.setFont(Font.font("System", FontWeight.BOLD, 18));
         
@@ -245,7 +245,8 @@ public class ProductPage {
         reviewsSection.setPadding(new Insets(20));
         reviewsSection.setStyle("-fx-background-color: white; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 4, 0, 0, 1);");
         reviewsSection.getStyleClass().add("reviews-section");
-        reviewsSection.setMaxWidth(1000);
+        reviewsSection.setMinWidth(900);
+        reviewsSection.setMaxWidth(900);
         
         Label reviewsTitle = new Label("Đánh giá sản phẩm");
         reviewsTitle.setFont(Font.font("System", FontWeight.BOLD, 18));
@@ -312,9 +313,9 @@ public class ProductPage {
         currentPriceLabel.setTextFill(Color.RED);
         
         // Assuming no original price in JSON for now
-        Label originalPriceLabel = new Label(""); // Placeholder for original price if available
+        Label originalPriceLabel = new Label("Giá gốc"); // Placeholder for original price if available
         originalPriceLabel.setFont(Font.font("System", 14));
-        originalPriceLabel.setTextFill(Color.GRAY);
+        originalPriceLabel.setTextFill(Color.BLACK);
         originalPriceLabel.setStyle("-fx-strikethrough: true;");
         
         regularPrice.getChildren().addAll(currentPriceLabel, originalPriceLabel);

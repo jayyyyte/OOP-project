@@ -27,6 +27,7 @@ import util.ImageCache;
 import javafx.application.Platform;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.json.JSONArray;
 
 public class SearchResultsPage {
     private Scene scene;
@@ -108,8 +109,8 @@ public class SearchResultsPage {
                 List<CompletableFuture<Void>> imageLoadingFutures = new ArrayList<>();
                 List<VBox> productCards = new ArrayList<>();
 
-                // Display top 3 results
-                for (int i = 0; i < Math.min(3, results.size()); i++) {
+                // Display all results, 4 per row
+                for (int i = 0; i < results.size(); i++) {
                     JSONObject product = results.get(i);
                     VBox productCard = createProductCard(product, imageLoadingFutures);
                     productCards.add(productCard);
@@ -124,9 +125,15 @@ public class SearchResultsPage {
                             
                             // Add all product cards to the grid
                             for (int i = 0; i < productCards.size(); i++) {
-                                resultsGrid.add(productCards.get(i), i, 0);
+                                int col = i % 4; // Column index (0 to 3)
+                                int row = i / 4; // Row index
+                                resultsGrid.add(productCards.get(i), col, row);
                             }
-                            root.getChildren().add(resultsGrid);
+                            // Wrap resultsGrid in a ScrollPane
+                            ScrollPane scrollPane = new ScrollPane(resultsGrid);
+                            scrollPane.setFitToWidth(true); // Allow horizontal scrolling if needed, but fit width generally
+                            // Add the ScrollPane to the root
+                            root.getChildren().add(scrollPane);
                         });
                     });
             }
@@ -173,6 +180,38 @@ public class SearchResultsPage {
         product.priceCurrency = productJson.has("priceCurrency") ? productJson.getString("priceCurrency") : "";
         product.overallRating = productJson.optDouble("overallRating", 0.0);
         product.reviewCount = productJson.optInt("reviewCount", 0);
+
+        // Add description
+        product.description = productJson.has("description") ? productJson.getString("description") : "";
+
+        // Add specifications
+        product.specifications = new HashMap<>();
+        if (productJson.has("Spec_1")) {
+            product.specifications.put("Spec_1", productJson.getString("Spec_1"));
+        }
+        if (productJson.has("Spec_2")) {
+            product.specifications.put("Spec_2", productJson.getString("Spec_2"));
+        }
+        if (productJson.has("Spec_3")) {
+            product.specifications.put("Spec_3", productJson.getString("Spec_3"));
+        }
+        if (productJson.has("Spec_4")) {
+            product.specifications.put("Spec_4", productJson.getString("Spec_4"));
+        }
+
+        // Add reviews
+        if (productJson.has("reviews")) {
+            product.reviews = new ArrayList<>();
+            JSONArray reviewsArray = productJson.getJSONArray("reviews");
+            for (int i = 0; i < reviewsArray.length(); i++) {
+                JSONObject reviewJson = reviewsArray.getJSONObject(i);
+                Product.Review review = new Product.Review(
+                    reviewJson.has("author") ? reviewJson.getString("author") : "",
+                    reviewJson.has("content") ? reviewJson.getString("content") : ""
+                );
+                product.reviews.add(review);
+            }
+        }
 
         // Product image
         StackPane imageContainer = new StackPane();

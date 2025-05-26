@@ -10,7 +10,7 @@ public class PineconeConfig {
     public static final String NAMESPACE_LAPTOPS = "laptops";
     
     // Search parameters
-    public static final int TOP_K = 3; // Number of results to return
+    public static final int TOP_K = 5; // Number of results to return
     
     private PineconeConfig() {
         // Private constructor to prevent instantiation
