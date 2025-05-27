@@ -143,7 +143,7 @@ public class HomePage {
 
         // Add small spacer after logo
         Region logoSpacer = new Region();
-        logoSpacer.setPrefWidth(40);
+        logoSpacer.setPrefWidth(60);
 
         // Search bar
         HBox searchContainer = new HBox(5);
@@ -178,15 +178,10 @@ public class HomePage {
         searchContainer.getChildren().addAll(categoryComboBox, searchTypeComboBox, searchField);
         
         // Navigation buttons
-        Button cartBtn = new Button("Giỏ hàng");
         Button themeBtn = new Button("Toggle Theme");
         
-        cartBtn.getStyleClass().add("nav-button");
         themeBtn.getStyleClass().add("nav-button");
-        
-        cartBtn.setOnAction(e -> {
-            Router.navigateTo(new CartPage().createScene());
-        });
+    
         themeBtn.setOnAction(e -> toggleTheme());
         
         Region spacer = new Region();
@@ -196,7 +191,6 @@ public class HomePage {
             logoSpacer, // Add the spacer here
             searchContainer, 
             spacer, 
-            cartBtn, 
             themeBtn
         );
         return navbar;
