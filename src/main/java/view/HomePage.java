@@ -143,7 +143,7 @@ public class HomePage {
 
         // Add small spacer after logo
         Region logoSpacer = new Region();
-        logoSpacer.setPrefWidth(40);
+        logoSpacer.setPrefWidth(60);
 
         // Search bar
         HBox searchContainer = new HBox(5);
@@ -178,15 +178,10 @@ public class HomePage {
         searchContainer.getChildren().addAll(categoryComboBox, searchTypeComboBox, searchField);
 
         // Navigation buttons
-        Button cartBtn = new Button("Giỏ hàng");
         Button themeBtn = new Button("Toggle Theme");
 
-        cartBtn.getStyleClass().add("nav-button");
         themeBtn.getStyleClass().add("nav-button");
 
-        cartBtn.setOnAction(e -> {
-            Router.navigateTo(new CartPage().createScene());
-        });
         themeBtn.setOnAction(e -> toggleTheme());
 
         Region spacer = new Region();
@@ -196,7 +191,6 @@ public class HomePage {
                 logoSpacer, // Add the spacer here
                 searchContainer,
                 spacer,
-                cartBtn,
                 themeBtn
         );
         return navbar;
@@ -490,7 +484,7 @@ public class HomePage {
         card.setPadding(new Insets(15));
         card.setMinWidth(250);
         card.setMaxWidth(250);
-        card.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 5;");
+        card.getStyleClass().add("product-card");
 
         // Product image
         StackPane imageContainer = new StackPane();
@@ -499,7 +493,7 @@ public class HomePage {
 
         // Create a placeholder while image loads
         Label loadingLabel = new Label("Loading...");
-        loadingLabel.setStyle("-fx-background-color: #f5f5f5; -fx-alignment: center;");
+        loadingLabel.getStyleClass().add("product-loading-label");
         imageContainer.getChildren().add(loadingLabel);
 
         card.getChildren().add(imageContainer);
@@ -525,7 +519,7 @@ public class HomePage {
                         System.err.println("Error displaying image: " + e.getMessage());
                         imageContainer.getChildren().clear();
                         Label errorLabel = new Label("Image not available");
-                        errorLabel.setStyle("-fx-background-color: #f5f5f5; -fx-alignment: center;");
+                        errorLabel.getStyleClass().add("product-error-label");
                         imageContainer.getChildren().add(errorLabel);
                     }
                 });
@@ -533,8 +527,8 @@ public class HomePage {
                 System.err.println("Failed to load image: " + product.imageUrl);
                 javafx.application.Platform.runLater(() -> {
                     imageContainer.getChildren().clear();
-                    Label errorLabel = new Label("Image not availableeeeee");
-                    errorLabel.setStyle("-fx-background-color: #f5f5f5; -fx-alignment: center;");
+                    Label errorLabel = new Label("Image not available");
+                    errorLabel.getStyleClass().add("product-error-label");
                     imageContainer.getChildren().add(errorLabel);
                 });
             }
@@ -543,8 +537,7 @@ public class HomePage {
         // Product name
         Label nameLabel = new Label(product.name);
         nameLabel.setWrapText(true);
-        nameLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: bold;");
-        nameLabel.setPrefHeight(35);
+        nameLabel.getStyleClass().add("product-name-label");
         card.getChildren().add(nameLabel);
 
         // Price information
@@ -552,7 +545,7 @@ public class HomePage {
         priceBox.setAlignment(Pos.CENTER_LEFT);
 
         Label currentPriceLabel = new Label(String.format("%,.0f %s", product.price*1000, product.priceCurrency));
-        currentPriceLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: red;");
+        currentPriceLabel.getStyleClass().add("product-price-label");
         priceBox.getChildren().add(currentPriceLabel);
         card.getChildren().add(priceBox);
 
@@ -569,8 +562,7 @@ public class HomePage {
         }
 
         Button detailBtn = new Button("Chi tiết");
-        detailBtn.setStyle("-fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 5;");
-        detailBtn.setPrefWidth(100);
+        detailBtn.getStyleClass().add("product-detail-button");
 
         detailBtn.setOnAction(e -> Router.navigateTo(new ProductPage(product).createScene()));
 
