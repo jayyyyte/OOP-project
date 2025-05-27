@@ -141,10 +141,6 @@ public class HomePage {
         navbar.getStyleClass().add("nav-bar");
         navbar.setAlignment(Pos.CENTER);
 
-        // Logo
-        Label logo = new Label("CellphoneS");
-        logo.getStyleClass().add("logo");
-
         // Add small spacer after logo
         Region logoSpacer = new Region();
         logoSpacer.setPrefWidth(40);
@@ -197,7 +193,6 @@ public class HomePage {
         HBox.setHgrow(spacer, Priority.ALWAYS);
         
         navbar.getChildren().addAll(
-            logo,
             logoSpacer, // Add the spacer here
             searchContainer, 
             spacer, 

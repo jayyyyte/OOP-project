@@ -101,14 +101,10 @@ public class ProductPage {
         Label ratingsCount = new Label(product.reviewCount + " đánh giá");
         ratingsCount.setTextFill(Color.GRAY);
         
-        // Compare button
-        Button compareButton = new Button("+ So sánh");
-        compareButton.setStyle("-fx-border-color: #e74c3c; -fx-text-fill: #e74c3c; -fx-background-color: white;");
-        
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         
-        header.getChildren().addAll(backButton, productName, ratings, ratingsCount, spacer, compareButton);
+        header.getChildren().addAll(backButton, productName, ratings, ratingsCount, spacer);
         return header;
     }
     
